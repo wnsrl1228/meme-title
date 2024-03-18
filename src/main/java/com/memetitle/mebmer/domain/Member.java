@@ -21,6 +21,9 @@ public class Member {
     @Column(nullable = false, length = 30)
     private String snsLoginId;
 
+    @Column(nullable = false, unique = true)
+    private String snsTokenId;
+
     @Column(nullable = false, unique = true, length = 20)
     private String nickname;
 
@@ -38,4 +41,10 @@ public class Member {
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+    public Member(String snsLoginId, String snsTokenId, String nickname) {
+        this.snsLoginId = snsLoginId;
+        this.snsTokenId = snsTokenId;
+        this.nickname = nickname;
+    }
 }
