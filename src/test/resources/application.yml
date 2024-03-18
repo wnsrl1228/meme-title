@@ -19,7 +19,7 @@ spring:
       org.hibernate.SQL: debug
 
 jwt:
-  secret-key: "bWVtdGl0bGVpc3ZlcnluaWNld2Vic2VydmljZWFuZGl0aXNhand0c2VjcmV0a2V5YW5kYW5kdmVyeW5pY2VpdGhpbmtpdHN3ZWJzaXRlaXNuaWNlaWFtYWdvb2Rib3lpYW1hdG9tYm95"
+  secret-key: "c2VjcmV0a2V5c2VjcmV0a2V5c2VjcmV0a2V5c2VjcmV0a2V5c2VjcmV0a2V5c2VjcmV0a2V5c2VjcmV0a2V5c2VjcmV0a2V5c2VjcmV0a2V5c2VjcmV0a2V5c2VjcmV0a2V5c2VjcmV0a2V5"
   access-expiration-time: 1800000
   claims:
     issuer: "memetitle"
@@ -27,7 +27,7 @@ jwt:
 oauth2:
   provider:
     kakao:
-      client-id: "5e126202c18a4006a3db7a30a84fadb4"
-      client-secret: "uECCdSnELXq5tSrb7GjoVH6fg5aLQ6h0"
+      client-id: "test"
+      client-secret: "test"
       redirect-uri: "http://localhost:8080/login/kakao"
       token-uri: "https://kauth.kakao.com/oauth/token"
