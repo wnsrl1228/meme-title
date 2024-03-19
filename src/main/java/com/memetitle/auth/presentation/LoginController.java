@@ -1,15 +1,9 @@
 package com.memetitle.auth.presentation;
 
-import com.memetitle.auth.dto.OauthToken;
 import com.memetitle.auth.service.LoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController

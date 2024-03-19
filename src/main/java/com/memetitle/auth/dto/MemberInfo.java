@@ -1,7 +1,5 @@
 package com.memetitle.auth.dto;
 
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,13 +9,16 @@ import static lombok.AccessLevel.*;
 @NoArgsConstructor(access = PROTECTED)
 public class MemberInfo  {
 
-    @JsonProperty("sub")
     private String snsTokenId;
 
-    @JsonProperty("email")
-    private String snsLoginId;
+    private String email;
 
-    @JsonProperty("nickname")
     private String nickname;
+
+    public MemberInfo(String snsTokenId, String email, String nickname) {
+        this.snsTokenId = snsTokenId;
+        this.email = email;
+        this.nickname = nickname;
+    }
 
 }

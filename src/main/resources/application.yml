@@ -29,5 +29,6 @@ oauth2:
     kakao:
       client-id: "5e126202c18a4006a3db7a30a84fadb4"
       client-secret: "uECCdSnELXq5tSrb7GjoVH6fg5aLQ6h0"
-      redirect-uri: "http://localhost:8080/login/kakao"
-      token-uri: "https://kauth.kakao.com/oauth/token"
+      redirect-url: "http://localhost:8080/login/kakao"
+      token-url: "https://kauth.kakao.com/oauth/token"
+      oidc-public-key-url: "https://kauth.kakao.com/.well-known/jwks.json"

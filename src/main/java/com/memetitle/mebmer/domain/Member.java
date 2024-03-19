@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -12,17 +13,18 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 30)
-    private String snsLoginId;
-
     @Column(nullable = false, unique = true)
     private String snsTokenId;
+
+    @Column(nullable = false, unique = true, length = 30)
+    private String email;
 
     @Column(nullable = false, unique = true, length = 20)
     private String nickname;
@@ -42,9 +44,10 @@ public class Member {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    public Member(String snsLoginId, String snsTokenId, String nickname) {
-        this.snsLoginId = snsLoginId;
+    public Member(String snsTokenId, String email, String nickname) {
         this.snsTokenId = snsTokenId;
+        this.email = email;
         this.nickname = nickname;
+        status = MemberState.ACTIVE;
     }
 }

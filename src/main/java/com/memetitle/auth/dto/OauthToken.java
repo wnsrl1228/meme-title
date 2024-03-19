@@ -22,6 +22,4 @@ public class OauthToken {
 
     @JsonProperty("scope")
     private String scope;
-
-
 }
