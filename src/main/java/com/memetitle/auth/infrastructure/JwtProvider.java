@@ -6,6 +6,7 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -131,5 +132,16 @@ public class JwtProvider {
             e.printStackTrace();
             return null;
         }
+    }
+
+    @Cacheable("hello")
+    public String hello() {
+        try {
+            Thread.sleep(1000 * 5);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("hello 내부");
+        return "hello";
     }
 }

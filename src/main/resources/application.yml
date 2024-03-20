@@ -16,7 +16,8 @@ spring:
     open-in-view: false
 
     logging.level:
-      org.hibernate.SQL: debug
+      org:
+        hibernate.SQL: debug
 
 jwt:
   secret-key: "bWVtdGl0bGVpc3ZlcnluaWNld2Vic2VydmljZWFuZGl0aXNhand0c2VjcmV0a2V5YW5kYW5kdmVyeW5pY2VpdGhpbmtpdHN3ZWJzaXRlaXNuaWNlaWFtYWdvb2Rib3lpYW1hdG9tYm95"
@@ -31,4 +32,3 @@ oauth2:
       client-secret: "uECCdSnELXq5tSrb7GjoVH6fg5aLQ6h0"
       redirect-url: "http://localhost:8080/login/kakao"
       token-url: "https://kauth.kakao.com/oauth/token"
-      oidc-public-key-url: "https://kauth.kakao.com/.well-known/jwks.json"

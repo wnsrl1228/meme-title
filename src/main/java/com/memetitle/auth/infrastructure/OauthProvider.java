@@ -25,27 +25,29 @@ public class OauthProvider {
 
     private final JwtProvider jwtProvider;
 
-    private RestTemplate restTemplate = new RestTemplate();
+    private final OauthCacheProvider oauthCacheProvider;
+
+    private final RestTemplate restTemplate;
     protected final String clientId;
     protected final String clientSecret;
     protected final String redirectUri;
     protected final String tokenUri;
-    protected final String oidcPublicKeyUrl;
 
     public OauthProvider(
             @Value(PROPERTIES_PATH + "client-id}") final String clientId,
             @Value(PROPERTIES_PATH + "client-secret}") final String clientSecret,
             @Value(PROPERTIES_PATH + "redirect-url}") final String redirectUri,
             @Value(PROPERTIES_PATH + "token-url}") final String tokenUri,
-            @Value(PROPERTIES_PATH + "oidc-public-key-url}") final String oidcPublicKeyUrl,
+            final OauthCacheProvider oauthCacheProvider,
             final JwtProvider jwtProvider
     ) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.redirectUri = redirectUri;
         this.tokenUri = tokenUri;
-        this.oidcPublicKeyUrl = oidcPublicKeyUrl;
+        this.oauthCacheProvider = oauthCacheProvider;
         this.jwtProvider = jwtProvider;
+        restTemplate = new RestTemplate();
     }
 
     /**
@@ -113,27 +115,25 @@ public class OauthProvider {
     private Claims validateSignatureOfIdToken(final String idToken) {
 
         // 1. 공개키 목록 조회 api 요청
-        final ResponseEntity<OidcPublicKeys> oidcPublicKeyResponse = restTemplate.exchange(
-                oidcPublicKeyUrl,
-                HttpMethod.GET,
-                null, OidcPublicKeys.class
-        );
-
-        if (oidcPublicKeyResponse.getStatusCode().isError()) {
-            throw new RuntimeException("공개키 목록 조회에 실패하였습니다.");
-        }
+        OidcPublicKeys oidcPublicKeys = oauthCacheProvider.requestOidcPublicKeys();
 
         // 2. 공개키 목록에서 헤더의 kid에 해당하는 공개키 값 확인
         final JsonNode header = jwtProvider.getHeader(idToken);
         final String kid = header.get("kid").asText();
 
-        final OidcPublicKeys oidcPublickeys = oidcPublicKeyResponse.getBody();
+        OidcPublicKey oidcPublicKey = findOidcPublicKey(oidcPublicKeys, kid);
 
-        final OidcPublicKey oidcPublicKey = oidcPublickeys.getKeys().stream()
-                .filter(key -> key.getKid().equals(kid))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("유효하지 않은 토큰입니다."));
+        // 2-1. 공개키가 없는 경우
+        if (oidcPublicKey == null) {
+            // 2-2. 캐시 초기화 후 api 공개키 목록 재요청
+            oauthCacheProvider.clearOidcPublicKeysCache();
+            oidcPublicKeys = oauthCacheProvider.requestOidcPublicKeys();
+            oidcPublicKey = findOidcPublicKey(oidcPublicKeys, kid);
 
+            // 2-3. 재요청에도 공개키가 없는 경우 예외 발생
+            if (oidcPublicKey == null)
+                throw new RuntimeException("유효하지 않은 토큰입니다.");
+        }
 
         // 3. 찾은 공개키의 modulus과 exponent으로 RSA 복호화 공개키 생성
         final PublicKey publicKey = jwtProvider.generateJwtKeyDecryption(oidcPublicKey.getModulus(), oidcPublicKey.getExponent());
@@ -141,4 +141,12 @@ public class OauthProvider {
         // 4. idToken의 서명 검증
         return jwtProvider.validateToken(idToken, publicKey).getPayload();
     }
+
+    private OidcPublicKey findOidcPublicKey(OidcPublicKeys oidcPublicKeys, String kid) {
+        return oidcPublicKeys.getKeys().stream()
+                .filter(key -> key.getKid().equals(kid))
+                .findFirst()
+                .orElseGet(null);
+    }
+
 }
