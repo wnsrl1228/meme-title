@@ -1,5 +1,6 @@
 package com.memetitle.auth.service;
 
+import com.memetitle.auth.dto.LoginToken;
 import com.memetitle.auth.dto.MemberInfo;
 import com.memetitle.auth.infrastructure.JwtProvider;
 import com.memetitle.auth.infrastructure.OauthProvider;
@@ -14,10 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class LoginService {
 
-    private final OauthProvider oauthProvider;
     private final MemberRepository memberRepository;
+    private final OauthProvider oauthProvider;
+    private final JwtProvider jwtProvider;
 
-    public void login(final String code) {
+    public LoginToken login(final String code) {
 
         final MemberInfo memberInfo = oauthProvider.getMemberInfo(code);
 
@@ -25,6 +27,8 @@ public class LoginService {
                 .orElseGet(() -> save(memberInfo));
 
         // TODO : 추후 엑세스 토큰 발급 후 반환
+        String token = jwtProvider.createToken(member.getId().toString());
+        return new LoginToken(token);
     }
 
     private Member save(MemberInfo memberInfo) {
