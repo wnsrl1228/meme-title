@@ -21,7 +21,7 @@ public class LoginController {
             @RequestParam("code") final String code,
             final HttpServletResponse response
     ) {
-        LoginToken token = loginService.login(code);
+        final LoginToken token = loginService.login(code);
 
         final ResponseCookie cookie = ResponseCookie.from("access-token", token.getAccessToken())
                 .maxAge(60)

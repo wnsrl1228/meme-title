@@ -21,26 +21,26 @@ public class AuthHandlerInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        log.info("인가");
+        log.info("AuthHandlerInterceptor");
 
-        Cookie[] cookies = request.getCookies();
+        final Cookie[] cookies = request.getCookies();
 
         if (cookies == null) {
             throw new RuntimeException("로그인 후 이용해주세요.");
         }
-        
-        String token = Arrays.stream(cookies)
+
+        final String token = Arrays.stream(cookies)
                 .filter(c -> c.getName().equals("access-token"))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("토큰이 존재하지 않습니다."))
                 .getValue();
 
-        Jws<Claims> claimsJws = jwtProvider.validateToken(token);
+        final Jws<Claims> claimsJws = jwtProvider.validateToken(token);
 
-        String subject = Optional.ofNullable(claimsJws.getPayload().getSubject())
+        final String subject = Optional.ofNullable(claimsJws.getPayload().getSubject())
                 .orElseThrow(() -> new RuntimeException("잘못된 토큰입니다."));
 
-        Long memberId = Long.valueOf(subject);
+        final Long memberId = Long.valueOf(subject);
 
         request.setAttribute("memberId", memberId);
 
