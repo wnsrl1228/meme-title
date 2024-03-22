@@ -1,4 +1,4 @@
-package com.memetitle.auth.dto;
+package com.memetitle.auth.dto.request;
 
 import lombok.Getter;
 

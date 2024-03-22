@@ -21,7 +21,8 @@ spring:
 
 jwt:
   secret-key: "bWVtdGl0bGVpc3ZlcnluaWNld2Vic2VydmljZWFuZGl0aXNhand0c2VjcmV0a2V5YW5kYW5kdmVyeW5pY2VpdGhpbmtpdHN3ZWJzaXRlaXNuaWNlaWFtYWdvb2Rib3lpYW1hdG9tYm95"
-  access-expiration-time: 1800000
+  access-expiration-time: 180000010001000
+  refresh-expiration-time: 6048000001000
   claims:
     issuer: "memetitle"
 

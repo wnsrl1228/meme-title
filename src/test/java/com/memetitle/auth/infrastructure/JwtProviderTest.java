@@ -1,5 +1,6 @@
 package com.memetitle.auth.infrastructure;
 
+import com.memetitle.auth.dto.LoginTokens;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -47,8 +48,8 @@ class JwtProviderTest {
     @DisplayName("토큰이 발급에 성공하며 유효성 검증에 성공한다.")
     void createAndValidate_success() {
         // given & when
-        String token = jwtProvider.createToken(SAMPLE_SUBJECT);
-        String findSubject = jwtProvider.getSubject(token);
+        LoginTokens loginTokens = jwtProvider.createLoginTokens(SAMPLE_SUBJECT);
+        String findSubject = jwtProvider.getSubject(loginTokens.getAccessToken());
 
         // then
         assertThat(SAMPLE_SUBJECT).isEqualTo(findSubject);

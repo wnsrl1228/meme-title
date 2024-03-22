@@ -7,10 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
 import java.util.Optional;
 
 @Slf4j
@@ -21,29 +19,30 @@ public class AuthHandlerInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        log.info("AuthHandlerInterceptor");
+        log.info("AuthHandlerInterceptor URL : " + request.getRequestURI());
 
-        final Cookie[] cookies = request.getCookies();
-
-        if (cookies == null) {
-            throw new RuntimeException("로그인 후 이용해주세요.");
-        }
-
-        final String token = Arrays.stream(cookies)
-                .filter(c -> c.getName().equals("access-token"))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("토큰이 존재하지 않습니다."))
-                .getValue();
-
+        String token = extractTokenFromRequest(request);
         final Jws<Claims> claimsJws = jwtProvider.validateToken(token);
 
         final String subject = Optional.ofNullable(claimsJws.getPayload().getSubject())
                 .orElseThrow(() -> new RuntimeException("잘못된 토큰입니다."));
 
         final Long memberId = Long.valueOf(subject);
-
         request.setAttribute("memberId", memberId);
 
         return true;
+    }
+
+    public String extractTokenFromRequest(HttpServletRequest request) {
+        // Authorization 헤더 값을 가져옵니다.
+        String authorizationHeader = request.getHeader("Authorization");
+
+        // 헤더가 존재하고, Bearer로 시작하는지 확인합니다.
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            // Bearer 토큰을 추출하여 반환합니다.
+            return authorizationHeader.substring(7); // "Bearer " 다음의 값부터 반환합니다.
+        }
+
+        throw new RuntimeException("유효하지 않은 토큰입니다.");
     }
 }

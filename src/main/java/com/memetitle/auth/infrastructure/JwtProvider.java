@@ -2,6 +2,7 @@ package com.memetitle.auth.infrastructure;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.memetitle.auth.dto.LoginTokens;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -25,20 +26,34 @@ public class JwtProvider {
     private final SecretKey secretKey;
     private final String issuer;
     private final Long accessExpirationTime;
+    private final Long refreshExpirationTime;
 
     public JwtProvider(
             @Value("${jwt.secret-key}") final String secretKey,
             @Value("${jwt.claims.issuer}") final String issuer,
-            @Value("${jwt.access-expiration-time}") final Long accessExpirationTime
+            @Value("${jwt.access-expiration-time}") final Long accessExpirationTime,
+            @Value("${jwt.refresh-expiration-time}") final Long refreshExpirationTime
     ) {
         this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
         this.issuer = issuer;
         this.accessExpirationTime = accessExpirationTime;
+        this.refreshExpirationTime = refreshExpirationTime;
     }
 
-    public String createToken(final String subject) {
+    public LoginTokens createLoginTokens(final String subject) {
+        String accessToken = createToken(subject, accessExpirationTime);
+        String refreshToken = createToken(subject, refreshExpirationTime);
+
+        return new LoginTokens(accessToken, refreshToken);
+    }
+
+    public String createAccessToken(final String subject) {
+        return createToken(subject, accessExpirationTime);
+    }
+
+    private String createToken(final String subject, final Long expiration) {
         final Date now = new Date();
-        final Date expirationTime = new Date(now.getTime() + accessExpirationTime);
+        final Date expirationTime = new Date(now.getTime() + expiration);
 
         return Jwts.builder()
                 .issuer(issuer)  // 발급자

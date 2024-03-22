@@ -1,6 +1,7 @@
 package com.memetitle.auth.presentation;
 
-import com.memetitle.auth.dto.LoginToken;
+import com.memetitle.auth.dto.LoginTokens;
+import com.memetitle.auth.dto.response.TokenResponse;
 import com.memetitle.auth.service.LoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
@@ -17,21 +18,30 @@ public class LoginController {
     private final LoginService loginService;
 
     @GetMapping("/login/kakao")
-    public ResponseEntity<Void> login(
+    public ResponseEntity<TokenResponse> login(
             @RequestParam("code") final String code,
             final HttpServletResponse response
     ) {
-        final LoginToken token = loginService.login(code);
+        final LoginTokens token = loginService.login(code);
 
-        final ResponseCookie cookie = ResponseCookie.from("access-token", token.getAccessToken())
-                .maxAge(60)
+        final ResponseCookie cookie1 = ResponseCookie.from("refresh-token", token.getRefreshToken())
+                .maxAge(600)
                 .sameSite("None")
                 .secure(true)
                 .httpOnly(true)
                 .path("/")
                 .build();
-        response.addHeader(SET_COOKIE, cookie.toString());
 
-        return ResponseEntity.ok().build();
+        response.addHeader(SET_COOKIE, cookie1.toString());
+
+        return ResponseEntity.ok().body(new TokenResponse(token.getAccessToken()));
+    }
+
+    @GetMapping("/auth/token")
+    public ResponseEntity<TokenResponse> refreshAccessToken(
+            @CookieValue("refresh-token") final String refreshToken
+    ) {
+        final String accessToken = loginService.renewAccessToken(refreshToken);
+        return ResponseEntity.ok().body(new TokenResponse(accessToken));
     }
 }

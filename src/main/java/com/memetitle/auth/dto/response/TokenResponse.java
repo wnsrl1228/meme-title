@@ -1,4 +1,4 @@
-package com.memetitle.auth.dto;
+package com.memetitle.auth.dto.response;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,11 +7,11 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-public class LoginToken {
+public class TokenResponse {
 
     private String accessToken;
 
-    public LoginToken(String accessToken) {
+    public TokenResponse(String accessToken) {
         this.accessToken = accessToken;
     }
 }
