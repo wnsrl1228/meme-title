@@ -33,3 +33,4 @@ oauth2:
       client-secret: "uECCdSnELXq5tSrb7GjoVH6fg5aLQ6h0"
       redirect-url: "http://localhost:8080/login/kakao"
       token-url: "https://kauth.kakao.com/oauth/token"
+      oidc-public-key-url: "https://kauth.kakao.com/.well-known/jwks.json"

@@ -1,7 +1,10 @@
 package com.memetitle.auth.infrastructure;
 
 import com.memetitle.auth.dto.OidcPublicKeys;
+import com.memetitle.global.exception.AuthException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpMethod;
@@ -10,6 +13,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import static com.memetitle.global.exception.ErrorCode.FAILED_TO_RETRIEVE_PUBLIC_KEY_LIST;
+
 /**
  * 동일 클래스에서 @Cacheable 메서드 동작 안되기 때문에 따로 분리 (AOP issue)
  */
@@ -17,20 +22,29 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class OauthCacheProvider {
 
+    private static final String PROPERTIES_PATH = "${oauth2.provider.kakao.";
     private static final String PUBLIC_KEY_REQUEST_TTL = "2592000000"; // 30일
-    private static final String OIDC_PUBLIC_KEY_URL = "https://kauth.kakao.com/.well-known/jwks.json";
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
+    protected final String oidcPublicKeyUrl;
+
+    public OauthCacheProvider(
+            @Value(PROPERTIES_PATH + "oidc-public-key-url}") final String oidcPublicKeyUrl,
+            RestTemplateBuilder restTemplateBuilder
+    ) {
+        this.oidcPublicKeyUrl = oidcPublicKeyUrl;
+        this.restTemplate = restTemplateBuilder.build();
+    }
 
     @Cacheable("oidcPublicKeysCache")
     public OidcPublicKeys requestOidcPublicKeys() {
         final ResponseEntity<OidcPublicKeys> oidcPublicKeyResponse = restTemplate.exchange(
-                OIDC_PUBLIC_KEY_URL,
+                oidcPublicKeyUrl,
                 HttpMethod.GET,
                 null, OidcPublicKeys.class
         );
 
         if (oidcPublicKeyResponse.getStatusCode().isError()) {
-            throw new RuntimeException("공개키 목록 조회에 실패하였습니다.");
+            throw new AuthException(FAILED_TO_RETRIEVE_PUBLIC_KEY_LIST);
         }
         return oidcPublicKeyResponse.getBody();
     }

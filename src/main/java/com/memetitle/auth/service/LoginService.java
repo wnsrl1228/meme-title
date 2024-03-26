@@ -6,11 +6,15 @@ import com.memetitle.auth.dto.MemberInfo;
 import com.memetitle.auth.infrastructure.JwtProvider;
 import com.memetitle.auth.infrastructure.OauthProvider;
 import com.memetitle.auth.repository.RefreshTokenRepository;
+import com.memetitle.global.exception.AuthException;
+import com.memetitle.global.exception.NotFoundException;
 import com.memetitle.mebmer.domain.Member;
 import com.memetitle.mebmer.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static com.memetitle.global.exception.ErrorCode.INVALID_TOKEN;
 
 @Service
 @Transactional
@@ -45,7 +49,7 @@ public class LoginService {
         jwtProvider.validateToken(refreshToken);
 
         final RefreshToken findRefreshToken = refreshTokenRepository.findByToken(refreshToken)
-                .orElseThrow(() -> new RuntimeException("잘못된 토큰입니다."));
+                .orElseThrow(() -> new AuthException(INVALID_TOKEN));
 
         return jwtProvider.createAccessToken(findRefreshToken.getMemberId().toString());
     }

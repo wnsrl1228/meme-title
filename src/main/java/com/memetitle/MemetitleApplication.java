@@ -8,7 +8,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @EnableScheduling
 @EnableCaching
-@EnableJpaAuditing
 @SpringBootApplication
 public class MemetitleApplication {
 

@@ -5,8 +5,10 @@ import com.memetitle.auth.dto.MemberInfo;
 import com.memetitle.auth.dto.OauthToken;
 import com.memetitle.auth.dto.OidcPublicKey;
 import com.memetitle.auth.dto.OidcPublicKeys;
+import com.memetitle.global.exception.AuthException;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -17,37 +19,37 @@ import java.security.PublicKey;
 import java.util.Date;
 import java.util.Optional;
 
+import static com.memetitle.global.exception.ErrorCode.*;
+
 @Component
 public class OauthProvider {
 
     private static final String PROPERTIES_PATH = "${oauth2.provider.kakao.";
     private static final String ID_TOKEN_ISS = "https://kauth.kakao.com";
-
     private final JwtProvider jwtProvider;
-
     private final OauthCacheProvider oauthCacheProvider;
-
     private final RestTemplate restTemplate;
     protected final String clientId;
     protected final String clientSecret;
-    protected final String redirectUri;
-    protected final String tokenUri;
+    protected final String redirectUrl;
+    protected final String tokenUrl;
 
     public OauthProvider(
             @Value(PROPERTIES_PATH + "client-id}") final String clientId,
             @Value(PROPERTIES_PATH + "client-secret}") final String clientSecret,
-            @Value(PROPERTIES_PATH + "redirect-url}") final String redirectUri,
-            @Value(PROPERTIES_PATH + "token-url}") final String tokenUri,
+            @Value(PROPERTIES_PATH + "redirect-url}") final String redirectUrl,
+            @Value(PROPERTIES_PATH + "token-url}") final String tokenUrl,
             final OauthCacheProvider oauthCacheProvider,
-            final JwtProvider jwtProvider
+            final JwtProvider jwtProvider,
+            RestTemplateBuilder restTemplateBuilder
     ) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
-        this.redirectUri = redirectUri;
-        this.tokenUri = tokenUri;
+        this.redirectUrl = redirectUrl;
+        this.tokenUrl = tokenUrl;
         this.oauthCacheProvider = oauthCacheProvider;
         this.jwtProvider = jwtProvider;
-        restTemplate = new RestTemplate();
+        this.restTemplate = restTemplateBuilder.build();
     }
 
     /**
@@ -79,21 +81,21 @@ public class OauthProvider {
         params.add("code", code);
         params.add("client_id", clientId);
         params.add("client_secret", clientSecret);
-        params.add("redirect_uri", redirectUri);
+        params.add("redirect_uri", redirectUrl);
         params.add("grant_type", "authorization_code");
         final HttpEntity<MultiValueMap<String, String>> accessTokenRequestEntity = new HttpEntity<>(params, headers);
 
 
         // 토큰 api 요청
         final ResponseEntity<OauthToken> accessTokenResponse = restTemplate.exchange(
-                tokenUri,
+                tokenUrl,
                 HttpMethod.POST,
                 accessTokenRequestEntity,
                 OauthToken.class
         );
 
         return Optional.ofNullable(accessTokenResponse.getBody())
-                .orElseThrow(() -> new RuntimeException("잘못된 요청입니다."))
+                .orElseThrow(() -> new AuthException(INVALID_AUTHORIZATION_CODE))
                 .getIdToken();
     }
 
@@ -102,13 +104,15 @@ public class OauthProvider {
 
         final long currentTime = new Date().getTime() / 1000;
         final long expirationTime = payload.get("exp").asLong();
-        final String iss = payload.get("iss").asText();
-        final String aud = payload.get("aud").asText();
+        final String iss = Optional.ofNullable(payload.get("iss")).map(JsonNode::asText)
+                .orElseThrow(() -> new AuthException(INVALID_ID_TOKEN));
+        final String aud = Optional.ofNullable(payload.get("aud")).map(JsonNode::asText)
+                .orElseThrow(() -> new AuthException(INVALID_ID_TOKEN));
 
         if (!iss.equals(ID_TOKEN_ISS) || !aud.equals(clientId)) {
-            throw new RuntimeException("유효하지 않은 토큰값입니다.");
+            throw new AuthException(INVALID_ID_TOKEN);
         } else if (expirationTime <= currentTime ) {
-            throw new RuntimeException("만료된 토큰값입니다.");
+            throw new AuthException(EXPIRED_ID_TOKEN);
         }
     }
 
@@ -119,7 +123,8 @@ public class OauthProvider {
 
         // 2. 공개키 목록에서 헤더의 kid에 해당하는 공개키 값 확인
         final JsonNode header = jwtProvider.getHeader(idToken);
-        final String kid = header.get("kid").asText();
+        final String kid = Optional.ofNullable(header.get("kid")).map(JsonNode::asText)
+                .orElseThrow(() -> new AuthException(INVALID_ID_TOKEN));
 
         OidcPublicKey oidcPublicKey = findOidcPublicKey(oidcPublicKeys, kid);
 
@@ -132,7 +137,7 @@ public class OauthProvider {
 
             // 2-3. 재요청에도 공개키가 없는 경우 예외 발생
             if (oidcPublicKey == null)
-                throw new RuntimeException("유효하지 않은 토큰입니다.");
+                throw new AuthException(INVALID_ID_TOKEN);
         }
 
         // 3. 찾은 공개키의 modulus과 exponent으로 RSA 복호화 공개키 생성
@@ -146,7 +151,7 @@ public class OauthProvider {
         return oidcPublicKeys.getKeys().stream()
                 .filter(key -> key.getKid().equals(kid))
                 .findFirst()
-                .orElseGet(null);
+                .orElse(null);
     }
 
 }

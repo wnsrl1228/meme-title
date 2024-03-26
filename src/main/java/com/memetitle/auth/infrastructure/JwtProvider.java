@@ -3,11 +3,12 @@ package com.memetitle.auth.infrastructure;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.memetitle.auth.dto.LoginTokens;
+import com.memetitle.global.exception.AuthException;
+import com.memetitle.global.exception.InvalidException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -19,6 +20,8 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Base64;
 import java.util.Date;
+
+import static com.memetitle.global.exception.ErrorCode.*;
 
 @Component
 public class JwtProvider {
@@ -76,9 +79,9 @@ public class JwtProvider {
                 return parser(jwt, publicKey);
             }
         } catch (ExpiredJwtException ex) {
-            throw new RuntimeException("기한이 지난 토큰입니다.");
+            throw new AuthException(EXPIRED_TOKEN);
         } catch (JwtException ex) {
-            throw new RuntimeException("유효하지 않은 토큰입니다.");
+            throw new AuthException(INVALID_TOKEN);
         }
     }
 
@@ -117,9 +120,9 @@ public class JwtProvider {
             keyFactory = KeyFactory.getInstance("RSA");
             return keyFactory.generatePublic(rsaPublicKeySpec);
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
+            throw new AuthException(SERVER_ERROR);
         } catch (InvalidKeySpecException e) {
-            throw new RuntimeException(e);
+            throw new AuthException(INVALID_KEY_SPEC);
         }
     }
 
@@ -134,7 +137,7 @@ public class JwtProvider {
     private String decodeTokenPart(final String jwt, final int part) {
         final String[] splitToken = jwt.split("\\.");
         if (splitToken.length != 3)
-            throw new RuntimeException("jwt 형식이 아닙니다.");
+            throw new InvalidException(INVALID_JWT_FORMAT);
 
         return new String(Base64.getDecoder().decode(splitToken[part]));
     }
@@ -147,16 +150,5 @@ public class JwtProvider {
             e.printStackTrace();
             return null;
         }
-    }
-
-    @Cacheable("hello")
-    public String hello() {
-        try {
-            Thread.sleep(1000 * 5);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println("hello 내부");
-        return "hello";
     }
 }
