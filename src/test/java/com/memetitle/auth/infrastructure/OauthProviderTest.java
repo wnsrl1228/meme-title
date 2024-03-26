@@ -6,6 +6,7 @@ import com.memetitle.auth.dto.MemberInfo;
 import com.memetitle.auth.dto.OauthToken;
 import com.memetitle.auth.dto.OidcPublicKey;
 import com.memetitle.auth.dto.OidcPublicKeys;
+import com.memetitle.global.config.RestTemplateConfig;
 import io.jsonwebtoken.Jwts;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,10 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
-import org.springframework.test.web.client.RequestMatcher;
 import org.springframework.test.web.client.match.MockRestRequestMatchers;
 import org.springframework.test.web.client.response.MockRestResponseCreators;
 
@@ -33,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 
 
-@RestClientTest(value = {OauthProvider.class, OauthCacheProvider.class, JwtProvider.class})
+@RestClientTest(value = {OauthProvider.class, OauthCacheProvider.class, JwtProvider.class, RestTemplateConfig.class, RestTemplateBuilder.class})
 class OauthProviderTest {
 
     private static final Long SAMPLE_EXPIRATION_TIME = 60000L;
@@ -64,9 +65,6 @@ class OauthProviderTest {
     private String tokenUrl;
     @Value("${oauth2.provider.kakao.client-id}")
     private String clientId;
-    @Value("${oauth2.provider.kakao.oidc-public-key-url}")
-    private String oidcPublicKeyUrl;
-
 
     private String makeTestIdTokenJwt(
             final Long accessExpirationTime,

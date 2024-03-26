@@ -8,7 +8,6 @@ import com.memetitle.auth.dto.OidcPublicKeys;
 import com.memetitle.global.exception.AuthException;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -41,7 +40,7 @@ public class OauthProvider {
             @Value(PROPERTIES_PATH + "token-url}") final String tokenUrl,
             final OauthCacheProvider oauthCacheProvider,
             final JwtProvider jwtProvider,
-            RestTemplateBuilder restTemplateBuilder
+            final RestTemplate restTemplate
     ) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
@@ -49,7 +48,7 @@ public class OauthProvider {
         this.tokenUrl = tokenUrl;
         this.oauthCacheProvider = oauthCacheProvider;
         this.jwtProvider = jwtProvider;
-        this.restTemplate = restTemplateBuilder.build();
+        this.restTemplate = restTemplate;
     }
 
     /**

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.memetitle.auth.dto.OidcPublicKey;
 import com.memetitle.auth.dto.OidcPublicKeys;
+import com.memetitle.global.config.RestTemplateConfig;
 import com.memetitle.global.exception.AuthException;
 import com.memetitle.global.exception.ErrorCode;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,6 +20,7 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.client.ResponseCreator;
 import org.springframework.test.web.client.match.MockRestRequestMatchers;
 import org.springframework.test.web.client.response.MockRestResponseCreators;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 
@@ -25,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
-@RestClientTest(value = {OauthCacheProvider.class})
+@RestClientTest(value = {OauthCacheProvider.class, RestTemplateConfig.class, RestTemplateBuilder.class})
 class OauthCacheProviderTest {
 
     @Autowired

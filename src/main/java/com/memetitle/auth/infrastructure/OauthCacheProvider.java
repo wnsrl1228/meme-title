@@ -4,7 +4,6 @@ import com.memetitle.auth.dto.OidcPublicKeys;
 import com.memetitle.global.exception.AuthException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpMethod;
@@ -29,10 +28,10 @@ public class OauthCacheProvider {
 
     public OauthCacheProvider(
             @Value(PROPERTIES_PATH + "oidc-public-key-url}") final String oidcPublicKeyUrl,
-            RestTemplateBuilder restTemplateBuilder
+            final RestTemplate restTemplate
     ) {
         this.oidcPublicKeyUrl = oidcPublicKeyUrl;
-        this.restTemplate = restTemplateBuilder.build();
+        this.restTemplate = restTemplate;
     }
 
     @Cacheable("oidcPublicKeysCache")
