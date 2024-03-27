@@ -7,6 +7,8 @@ import com.memetitle.auth.dto.OauthToken;
 import com.memetitle.auth.dto.OidcPublicKey;
 import com.memetitle.auth.dto.OidcPublicKeys;
 import com.memetitle.global.config.RestTemplateConfig;
+import com.memetitle.global.exception.AuthException;
+import com.memetitle.global.exception.ErrorCode;
 import io.jsonwebtoken.Jwts;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,6 +32,7 @@ import java.util.Base64;
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 
@@ -45,8 +48,8 @@ class OauthProviderTest {
     private static final String SAMPLE_ISSUER = "https://kauth.kakao.com";
     private static final String INVALID_SAMPLE_ISSUER = "https://kauth.kokoa.com";
     private static final String INVALID_CLIENT_ID = "error";
-    private static final String SAMPLE_MODULUS = "q8zZ0b_MNaLd6Ny8wd4cjFomilLfFIZcmhNSc1ttx_oQdJJZt5CDHB8WWwPGBUDUyY8AmfglS9Y1qA0_fxxs-ZUWdt45jSbUxghKNYgEwSutfM5sROh3srm5TiLW4YfOvKytGW1r9TQEdLe98ork8-rNRYPybRI3SKoqpci1m1QOcvUg4xEYRvbZIWku24DNMSeheytKUz6Ni4kKOVkzfGN11rUj1IrlRR-LNA9V9ZYmeoywy3k066rD5TaZHor5bM5gIzt1B4FmUuFITpXKGQZS5Hn_Ck8Bgc8kLWGAU8TzmOzLeROosqKE0eZJ4ESLMImTb2XSEZuN1wFyL0VtJw";
-    private static final String SAMPLE_EXPONENT = "AQAB";
+    private static final String INVALID_SAMPLE_MODULUS = "q8zZ0b_MNaLd6Ny8wd4cjFomilLfFIZcmhNSc1ttx_oQdJJZt5CDHB8WWwPGBUDUyY8AmfglS9Y1qA0_fxxs-ZUWdt45jSbUxghKNYgEwSutfM5sROh3srm5TiLW4YfOvKytGW1r9TQEdLe98ork8-rNRYPybRI3SKoqpci1m1QOcvUg4xEYRvbZIWku24DNMSeheytKUz6Ni4kKOVkzfGN11rUj1IrlRR-LNA9V9ZYmeoywy3k066rD5TaZHor5bM5gIzt1B4FmUuFITpXKGQZS5Hn_Ck8Bgc8kLWGAU8TzmOzLeROosqKE0eZJ4ESLMImTb2XSEZuN1wFyL0VtJw";
+    private static final String INVALID_SAMPLE_EXPONENT = "AQAB";
     private static final String SAMPLE_EMAIL = "hello123@naver.com";
     private static final String SAMPLE_NICKNAME = "hello";
 
@@ -94,19 +97,13 @@ class OauthProviderTest {
     }
 
     @Test
-    @DisplayName("oauth2 로 멤버 조회에 성공한다.")
+    @DisplayName("oauth2로 멤버 조회에 성공한다.")
     void getMemberInfo_success() throws JsonProcessingException {
 
         // given
-        KeyPair keyPair = Jwts.SIG.RS256.keyPair().build();
-        PrivateKey privateKey = keyPair.getPrivate();
-        PublicKey publicKey = keyPair.getPublic();
+        KeyPairInfo keyPairInfo = new KeyPairInfo();
 
-        RSAPublicKey rsaPublicKey = (RSAPublicKey) publicKey;
-        String modulus = Base64.getUrlEncoder().withoutPadding().encodeToString(rsaPublicKey.getModulus().toByteArray());
-        String exponent = Base64.getUrlEncoder().withoutPadding().encodeToString(rsaPublicKey.getPublicExponent().toByteArray());
-
-        String idToken = makeTestIdTokenJwt(SAMPLE_EXPIRATION_TIME, SAMPLE_KID, SAMPLE_SUBJECT, clientId, SAMPLE_EMAIL, SAMPLE_NICKNAME, SAMPLE_ISSUER, privateKey );
+        String idToken = makeTestIdTokenJwt(SAMPLE_EXPIRATION_TIME, SAMPLE_KID, SAMPLE_SUBJECT, clientId, SAMPLE_EMAIL, SAMPLE_NICKNAME, SAMPLE_ISSUER, keyPairInfo.getPrivateKey() );
         OauthToken oauthToken = getOauthTokenFixture(idToken);
 
         String expectResult = objectMapper.writeValueAsString(oauthToken);
@@ -115,8 +112,8 @@ class OauthProviderTest {
                 .andRespond(MockRestResponseCreators.withSuccess(expectResult, MediaType.APPLICATION_JSON));
 
 
-        OidcPublicKeys oidcPublicKeys = getOidcPublicKeysFixture(SAMPLE_KID, modulus, exponent);
-        given(oauthCacheProvider.requestOidcPublicKeys()).willReturn(oidcPublicKeys);
+        given(oauthCacheProvider.requestOidcPublicKeys())
+                .willReturn(getOidcPublicKeysFixture(SAMPLE_KID, keyPairInfo.getModulus(), keyPairInfo.getExponent()));
 
         // when
         MemberInfo memberInfo = oauthProvider.getMemberInfo("code");
@@ -125,6 +122,145 @@ class OauthProviderTest {
         assertThat(SAMPLE_EMAIL).isEqualTo(memberInfo.getEmail());
         assertThat(SAMPLE_NICKNAME).isEqualTo(memberInfo.getNickname());
         assertThat(SAMPLE_SUBJECT).isEqualTo(memberInfo.getSnsTokenId());
+        mockServer.verify();
+    }
+
+    @Test
+    @DisplayName("oauth2로 멤버 조회시 토큰 요청에 유효하지 않은 인가토큰을 보낼 경우 예외가 발생한다.")
+    void getMemberInfo_INVALID_AUTHORIZATION_CODE() {
+
+        // given
+        mockServer.expect(MockRestRequestMatchers.requestTo(tokenUrl))
+                .andExpect(MockRestRequestMatchers.method(HttpMethod.POST))
+                .andRespond(MockRestResponseCreators.withBadRequest());
+
+        // when | then
+        assertThatThrownBy(() -> oauthProvider.getMemberInfo("code"))
+                .isInstanceOf(AuthException.class)
+                .hasMessage(ErrorCode.INVALID_AUTHORIZATION_CODE.getMessage());
+        mockServer.verify();
+    }
+
+    @Test
+    @DisplayName("oauth2로 멤버 조회시 유효하지 않은 발급자의 idToken일 경우 예외가 발생한다.")
+    void getMemberInfo_INVALID_ID_TOKEN() throws JsonProcessingException {
+
+        // given
+        KeyPairInfo keyPairInfo = new KeyPairInfo();
+
+        String idToken = makeTestIdTokenJwt(SAMPLE_EXPIRATION_TIME, SAMPLE_KID, SAMPLE_SUBJECT, clientId, SAMPLE_EMAIL, SAMPLE_NICKNAME, INVALID_SAMPLE_ISSUER, keyPairInfo.getPrivateKey() );
+        OauthToken oauthToken = getOauthTokenFixture(idToken);
+
+        String expectResult = objectMapper.writeValueAsString(oauthToken);
+        mockServer.expect(MockRestRequestMatchers.requestTo(tokenUrl))
+                .andExpect(MockRestRequestMatchers.method(HttpMethod.POST))
+                .andRespond(MockRestResponseCreators.withSuccess(expectResult, MediaType.APPLICATION_JSON));
+
+        // when | then
+        assertThatThrownBy(() -> oauthProvider.getMemberInfo("code"))
+                .isInstanceOf(AuthException.class)
+                .hasMessage(ErrorCode.INVALID_ID_TOKEN.getMessage());
+        mockServer.verify();
+    }
+
+    @Test
+    @DisplayName("oauth2로 멤버 조회시 만료된 idToken일 경우 예외가 발생한다.")
+    void getMemberInfo_EXPIRED_ID_TOKEN() throws JsonProcessingException {
+
+        // given
+        KeyPairInfo keyPairInfo = new KeyPairInfo();
+
+        String idToken = makeTestIdTokenJwt(SAMPLE_EXPIRED_TIME, SAMPLE_KID, SAMPLE_SUBJECT, clientId, SAMPLE_EMAIL, SAMPLE_NICKNAME, SAMPLE_ISSUER, keyPairInfo.getPrivateKey() );
+        OauthToken oauthToken = getOauthTokenFixture(idToken);
+
+        String expectResult = objectMapper.writeValueAsString(oauthToken);
+        mockServer.expect(MockRestRequestMatchers.requestTo(tokenUrl))
+                .andExpect(MockRestRequestMatchers.method(HttpMethod.POST))
+                .andRespond(MockRestResponseCreators.withSuccess(expectResult, MediaType.APPLICATION_JSON));
+
+        // when | then
+        assertThatThrownBy(() -> oauthProvider.getMemberInfo("code"))
+                .isInstanceOf(AuthException.class)
+                .hasMessage(ErrorCode.EXPIRED_ID_TOKEN.getMessage());
+        mockServer.verify();
+    }
+
+    @Test
+    @DisplayName("oauth2로 멤버 조회시 공개키 목록에 맞는 kid가 없는 경우 예외가 발생한다.")
+    void getMemberInfo_doseNotHave_kid_INVALID_ID_TOKEN() throws JsonProcessingException {
+
+        // given
+        KeyPairInfo keyPairInfo = new KeyPairInfo();
+
+        String idToken = makeTestIdTokenJwt(SAMPLE_EXPIRATION_TIME, INVALID_SAMPLE_KID, SAMPLE_SUBJECT, clientId, SAMPLE_EMAIL, SAMPLE_NICKNAME, SAMPLE_ISSUER, keyPairInfo.getPrivateKey() );
+        OauthToken oauthToken = getOauthTokenFixture(idToken);
+
+        String expectResult = objectMapper.writeValueAsString(oauthToken);
+        mockServer.expect(MockRestRequestMatchers.requestTo(tokenUrl))
+                .andExpect(MockRestRequestMatchers.method(HttpMethod.POST))
+                .andRespond(MockRestResponseCreators.withSuccess(expectResult, MediaType.APPLICATION_JSON));
+
+
+        given(oauthCacheProvider.requestOidcPublicKeys())
+                .willReturn(getOidcPublicKeysFixture(SAMPLE_KID, keyPairInfo.getModulus(), keyPairInfo.getExponent()));
+
+        // when | then
+        assertThatThrownBy(() -> oauthProvider.getMemberInfo("code"))
+                .isInstanceOf(AuthException.class)
+                .hasMessage(ErrorCode.INVALID_ID_TOKEN.getMessage());
+        mockServer.verify();
+    }
+
+    @Test
+    @DisplayName("oauth2로 멤버 조회시 공개키 목록의 modulus와 exponent가 유효하지 않을 경우 예외가 발생한다.")
+    void getMemberInfo_INVALID_KEY_SPEC() throws JsonProcessingException {
+
+        // given
+        KeyPairInfo keyPairInfo = new KeyPairInfo();
+
+        String idToken = makeTestIdTokenJwt(SAMPLE_EXPIRATION_TIME, SAMPLE_KID, SAMPLE_SUBJECT, clientId, SAMPLE_EMAIL, SAMPLE_NICKNAME, SAMPLE_ISSUER, keyPairInfo.getPrivateKey() );
+        OauthToken oauthToken = getOauthTokenFixture(idToken);
+
+        String expectResult = objectMapper.writeValueAsString(oauthToken);
+        mockServer.expect(MockRestRequestMatchers.requestTo(tokenUrl))
+                .andExpect(MockRestRequestMatchers.method(HttpMethod.POST))
+                .andRespond(MockRestResponseCreators.withSuccess(expectResult, MediaType.APPLICATION_JSON));
+
+
+        given(oauthCacheProvider.requestOidcPublicKeys())
+                .willReturn(getOidcPublicKeysFixture(SAMPLE_KID, "aaa", "bbb"));
+
+        // when | then
+        assertThatThrownBy(() -> oauthProvider.getMemberInfo("code"))
+                .isInstanceOf(AuthException.class)
+                .hasMessage(ErrorCode.INVALID_KEY_SPEC.getMessage());
+        mockServer.verify();
+    }
+
+
+    @Test
+    @DisplayName("oauth2로 멤버 조회시 publicKey가 유효하지 않은 경우 idToken의 서명 검증에 예외가 발생한다.")
+    void getMemberInfo_INVALID_PUBLIC_KEY() throws JsonProcessingException {
+
+        // given
+        KeyPairInfo keyPairInfo = new KeyPairInfo();
+
+        String idToken = makeTestIdTokenJwt(SAMPLE_EXPIRATION_TIME, SAMPLE_KID, SAMPLE_SUBJECT, clientId, SAMPLE_EMAIL, SAMPLE_NICKNAME, SAMPLE_ISSUER, keyPairInfo.getPrivateKey() );
+        OauthToken oauthToken = getOauthTokenFixture(idToken);
+
+        String expectResult = objectMapper.writeValueAsString(oauthToken);
+        mockServer.expect(MockRestRequestMatchers.requestTo(tokenUrl))
+                .andExpect(MockRestRequestMatchers.method(HttpMethod.POST))
+                .andRespond(MockRestResponseCreators.withSuccess(expectResult, MediaType.APPLICATION_JSON));
+
+
+        given(oauthCacheProvider.requestOidcPublicKeys())
+                .willReturn(getOidcPublicKeysFixture(SAMPLE_KID, INVALID_SAMPLE_MODULUS, INVALID_SAMPLE_EXPONENT));
+
+        // when | then
+        assertThatThrownBy(() -> oauthProvider.getMemberInfo("code"))
+                .isInstanceOf(AuthException.class)
+                .hasMessage(ErrorCode.INVALID_TOKEN.getMessage());
         mockServer.verify();
     }
 
@@ -138,5 +274,39 @@ class OauthProviderTest {
 
         OidcPublicKeys oidcPublicKeys = new OidcPublicKeys(oidcPublicKeyList);
         return oidcPublicKeys;
+    }
+
+
+    public class KeyPairInfo {
+        public PrivateKey privateKey;
+        public PublicKey publicKey;
+        public String modulus;
+        public String exponent;
+
+        public KeyPairInfo() {
+            KeyPair keyPair = Jwts.SIG.RS256.keyPair().build();
+            this.privateKey = keyPair.getPrivate();
+            this.publicKey = keyPair.getPublic();
+
+            RSAPublicKey rsaPublicKey = (RSAPublicKey) publicKey;
+            this.modulus = Base64.getUrlEncoder().withoutPadding().encodeToString(rsaPublicKey.getModulus().toByteArray());
+            this.exponent = Base64.getUrlEncoder().withoutPadding().encodeToString(rsaPublicKey.getPublicExponent().toByteArray());
+        }
+
+        public PrivateKey getPrivateKey() {
+            return privateKey;
+        }
+
+        public PublicKey getPublicKey() {
+            return publicKey;
+        }
+
+        public String getModulus() {
+            return modulus;
+        }
+
+        public String getExponent() {
+            return exponent;
+        }
     }
 }

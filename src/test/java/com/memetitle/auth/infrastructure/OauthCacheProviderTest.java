@@ -14,13 +14,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
-import org.springframework.test.web.client.ResponseCreator;
 import org.springframework.test.web.client.match.MockRestRequestMatchers;
 import org.springframework.test.web.client.response.MockRestResponseCreators;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 
@@ -63,26 +60,26 @@ class OauthCacheProviderTest {
         assertThat("1").isEqualTo(oidcPublicKeys.getKeys().get(0).getKid());
         mockServer.verify();
     }
-//
-//    @Test
-//    @DisplayName("oidc 공개키 목록 조회에 실패한다.")
-//    void requestOidcPublicKeys_fail() throws JsonProcessingException {
-//
-//        // given
-//        OidcPublicKeys oidcPublicKeysFixture = getOidcPublicKeysFixture("1", "m", "e");
-//
-//        String expectResult = objectMapper.writeValueAsString(oidcPublicKeysFixture);
-//
-//        mockServer.expect(MockRestRequestMatchers.requestTo(oidcPublicKeyUrl))
-//                .andExpect(MockRestRequestMatchers.method(HttpMethod.GET))
-//                        .andRespond(MockRestResponseCreators.);
-//
-//        // when & then
-//        assertThatThrownBy(() -> oauthCacheProvider.requestOidcPublicKeys())
-//                .isInstanceOf(AuthException.class)
-//                .hasMessage(ErrorCode.FAILED_TO_RETRIEVE_PUBLIC_KEY_LIST.getMessage());
-//        mockServer.verify();
-//    }
+
+    @Test
+    @DisplayName("oidc 공개키 목록 조회에 실패한다.")
+    void requestOidcPublicKeys_fail() throws JsonProcessingException {
+
+        // given
+        OidcPublicKeys oidcPublicKeysFixture = getOidcPublicKeysFixture("1", "m", "e");
+
+        String expectResult = objectMapper.writeValueAsString(oidcPublicKeysFixture);
+
+        mockServer.expect(MockRestRequestMatchers.requestTo(oidcPublicKeyUrl))
+                .andExpect(MockRestRequestMatchers.method(HttpMethod.GET))
+                        .andRespond(MockRestResponseCreators.withBadRequest());
+
+        // when & then
+        assertThatThrownBy(() -> oauthCacheProvider.requestOidcPublicKeys())
+                .isInstanceOf(AuthException.class)
+                .hasMessage(ErrorCode.FAILED_TO_RETRIEVE_PUBLIC_KEY_LIST.getMessage());
+        mockServer.verify();
+    }
 
     private OidcPublicKeys getOidcPublicKeysFixture(String kid, String modulus, String exponent) {
         ArrayList<OidcPublicKey> oidcPublicKeyList = new ArrayList<>();

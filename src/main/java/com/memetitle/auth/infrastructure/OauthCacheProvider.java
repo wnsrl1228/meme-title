@@ -10,7 +10,10 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.UnknownHttpStatusCodeException;
 
 import static com.memetitle.global.exception.ErrorCode.FAILED_TO_RETRIEVE_PUBLIC_KEY_LIST;
 
@@ -36,16 +39,20 @@ public class OauthCacheProvider {
 
     @Cacheable("oidcPublicKeysCache")
     public OidcPublicKeys requestOidcPublicKeys() {
-        final ResponseEntity<OidcPublicKeys> oidcPublicKeyResponse = restTemplate.exchange(
-                oidcPublicKeyUrl,
-                HttpMethod.GET,
-                null, OidcPublicKeys.class
-        );
+        try {
+            final ResponseEntity<OidcPublicKeys> oidcPublicKeyResponse = restTemplate.exchange(
+                    oidcPublicKeyUrl,
+                    HttpMethod.GET,
+                    null, OidcPublicKeys.class
+            );
+            if (oidcPublicKeyResponse.getStatusCode().isError()) {
+                throw new AuthException(FAILED_TO_RETRIEVE_PUBLIC_KEY_LIST);
+            }
+            return oidcPublicKeyResponse.getBody();
 
-        if (oidcPublicKeyResponse.getStatusCode().isError()) {
+        } catch (HttpClientErrorException | HttpServerErrorException | UnknownHttpStatusCodeException e) {
             throw new AuthException(FAILED_TO_RETRIEVE_PUBLIC_KEY_LIST);
         }
-        return oidcPublicKeyResponse.getBody();
     }
 
     @CacheEvict(value = "oidcPublicKeysCache", allEntries = true)

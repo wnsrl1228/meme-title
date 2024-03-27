@@ -7,7 +7,6 @@ import com.memetitle.auth.infrastructure.JwtProvider;
 import com.memetitle.auth.infrastructure.OauthProvider;
 import com.memetitle.auth.repository.RefreshTokenRepository;
 import com.memetitle.global.exception.AuthException;
-import com.memetitle.global.exception.NotFoundException;
 import com.memetitle.mebmer.domain.Member;
 import com.memetitle.mebmer.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;

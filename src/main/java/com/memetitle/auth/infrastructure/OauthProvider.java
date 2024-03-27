@@ -12,7 +12,10 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.UnknownHttpStatusCodeException;
 
 import java.security.PublicKey;
 import java.util.Date;
@@ -86,16 +89,20 @@ public class OauthProvider {
 
 
         // 토큰 api 요청
-        final ResponseEntity<OauthToken> accessTokenResponse = restTemplate.exchange(
-                tokenUrl,
-                HttpMethod.POST,
-                accessTokenRequestEntity,
-                OauthToken.class
-        );
+        try {
+            final ResponseEntity<OauthToken> accessTokenResponse = restTemplate.exchange(
+                    tokenUrl,
+                    HttpMethod.POST,
+                    accessTokenRequestEntity,
+                    OauthToken.class
+            );
+            return Optional.ofNullable(accessTokenResponse.getBody())
+                    .orElseThrow(() -> new AuthException(INVALID_AUTHORIZATION_CODE))
+                    .getIdToken();
 
-        return Optional.ofNullable(accessTokenResponse.getBody())
-                .orElseThrow(() -> new AuthException(INVALID_AUTHORIZATION_CODE))
-                .getIdToken();
+        } catch (HttpClientErrorException | HttpServerErrorException | UnknownHttpStatusCodeException e) {
+            throw new AuthException(INVALID_AUTHORIZATION_CODE);
+        }
     }
 
     private void validateIdToken(final String idToken) {
