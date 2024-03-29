@@ -24,4 +24,10 @@ public class Meme {
 
     @Column(nullable = false)
     private LocalDate endDate;
+
+    public Meme(String imgUrl, LocalDate startDate, LocalDate endDate) {
+        this.imgUrl = imgUrl;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
 }

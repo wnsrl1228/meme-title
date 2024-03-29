@@ -1,7 +1,7 @@
 package com.memetitle.comment.domain;
 
 import com.memetitle.mebmer.domain.Member;
-import com.memetitle.meme.domain.MemeTitle;
+import com.memetitle.meme.domain.Title;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,8 +28,8 @@ public class Comment {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "meme_title_id")
-    private MemeTitle memeTitle;
+    @JoinColumn(name = "title_id")
+    private Title title;
 
     @CreatedDate
     @Column(updatable = false)

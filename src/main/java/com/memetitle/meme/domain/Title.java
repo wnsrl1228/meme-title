@@ -14,14 +14,14 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
-public class MemeTitle {
+public class Title {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private Integer memeId;
+    private Long memeId;
 
     @Column(nullable = false, length = 50)
     private String title;
@@ -33,4 +33,11 @@ public class MemeTitle {
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;
+
+    public Title(Long memeId, Member member, String title) {
+        this.memeId = memeId;
+        this.member = member;
+        this.title = title;
+    }
+
 }

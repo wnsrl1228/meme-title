@@ -1,12 +1,10 @@
 package com.memetitle.auth.dto.response;
 
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-
-import static lombok.AccessLevel.PROTECTED;
 
 @Getter
-@NoArgsConstructor(access = PROTECTED)
+@Builder
 public class TokenResponse {
 
     private String accessToken;

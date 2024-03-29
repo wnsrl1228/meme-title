@@ -44,6 +44,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .body(new ErrorResponse(e.getCode(), e.getMessage()));
     }
 
+    @ExceptionHandler(InvalidException.class)
+    protected ResponseEntity<ErrorResponse> handleInvalidException(InvalidException e) {
+        log.warn(e.getMessage(), e);
+
+        return ResponseEntity.badRequest()
+                .body(new ErrorResponse(e.getCode(), e.getMessage()));
+    }
+
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<ErrorResponse> handleException(Exception e) {
         log.error(e.getMessage(), e);

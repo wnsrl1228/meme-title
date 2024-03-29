@@ -21,7 +21,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new AuthHandlerInterceptor(jwtProvider))
                 .addPathPatterns("/**")
-                .excludePathPatterns("/", "/login/kakao", "/auth/token", "/*.ico", "/error");
+                .excludePathPatterns("/", "/memes/{memeId}/titles", "/login/kakao", "/auth/token", "/*.ico", "/error");
     }
 
     @Override

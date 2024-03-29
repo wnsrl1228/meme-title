@@ -1,6 +1,8 @@
 package com.memetitle.auth;
 
 import com.memetitle.auth.infrastructure.JwtProvider;
+import com.memetitle.global.exception.AuthException;
+import com.memetitle.global.exception.ErrorCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import lombok.RequiredArgsConstructor;
@@ -22,10 +24,10 @@ public class AuthHandlerInterceptor implements HandlerInterceptor {
         log.info("AuthHandlerInterceptor URL : " + request.getRequestURI());
 
         String token = extractTokenFromRequest(request);
-        final Jws<Claims> claimsJws = jwtProvider.validateToken(token);
+        jwtProvider.validateToken(token);
 
-        final String subject = Optional.ofNullable(claimsJws.getPayload().getSubject())
-                .orElseThrow(() -> new RuntimeException("잘못된 토큰입니다."));
+        final String subject = Optional.ofNullable(jwtProvider.getSubject(token))
+                .orElseThrow(() -> new AuthException(ErrorCode.INVALID_TOKEN));
 
         final Long memberId = Long.valueOf(subject);
         request.setAttribute("memberId", memberId);
@@ -43,6 +45,6 @@ public class AuthHandlerInterceptor implements HandlerInterceptor {
             return authorizationHeader.substring(7); // "Bearer " 다음의 값부터 반환합니다.
         }
 
-        throw new RuntimeException("유효하지 않은 토큰입니다.");
+        throw new AuthException(ErrorCode.INVALID_TOKEN);
     }
 }
