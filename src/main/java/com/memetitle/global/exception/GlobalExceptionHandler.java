@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.Objects;
@@ -34,6 +35,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         String errMessage = Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage();
         return ResponseEntity.badRequest()
                 .body(new ErrorResponse(INVALID_REQUEST.getCode(), errMessage));
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ErrorResponse> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException ex) {
+        return ResponseEntity.badRequest()
+                .body(new ErrorResponse(INVALID_REQUEST.getCode(), "파일 업로드 실패: 최대 업로드 크기를 초과했습니다"));
     }
 
     @ExceptionHandler(AuthException.class)
