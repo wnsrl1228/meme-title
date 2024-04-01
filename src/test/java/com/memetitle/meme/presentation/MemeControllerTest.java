@@ -89,7 +89,6 @@ class MemeControllerTest {
 
         // when, then
         mockMvc.perform(MockMvcRequestBuilders.get("/memes")
-                        .header(AUTHORIZATION, "Bearer access-token") // 임시
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
