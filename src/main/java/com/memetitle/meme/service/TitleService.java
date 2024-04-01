@@ -43,6 +43,7 @@ public class TitleService {
         return titleRepository.save(title).getId();
     }
 
+    @Transactional(readOnly = true)
     public TitlesResponse getTitlesByMemeId(final Long memeId) {
         memeRepository.findById(memeId)
                 .orElseThrow(() -> new InvalidException(NOT_FOUND_MEME_ID));

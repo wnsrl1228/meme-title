@@ -51,7 +51,7 @@ class TitleServiceTest {
 
     @BeforeEach
     void init() {
-        initMeme = memeRepository.save(new Meme(IMG_URL, LocalDate.now(), LocalDate.now()));
+        initMeme = memeRepository.save(new Meme("test.jpg", IMG_URL, LocalDate.now(), LocalDate.now()));
         initMember = memberRepository.save(new Member(SAMPLE_SNSTOKENID, SAMPLE_EMAIL, SAMPLE_NICKNAME));
         initTitle = titleRepository.save(new Title(initMeme.getId(), initMember, "안녕!"));
     }

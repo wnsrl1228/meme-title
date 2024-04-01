@@ -17,6 +17,9 @@ public class Meme {
     private Long id;
 
     @Column(nullable = false)
+    private String imgOriginalName;
+
+    @Column(nullable = false)
     private String imgUrl;
 
     @Column(nullable = false)
@@ -25,7 +28,8 @@ public class Meme {
     @Column(nullable = false)
     private LocalDate endDate;
 
-    public Meme(String imgUrl, LocalDate startDate, LocalDate endDate) {
+    public Meme(String imgOriginalName, String imgUrl, LocalDate startDate, LocalDate endDate) {
+        this.imgOriginalName = imgOriginalName;
         this.imgUrl = imgUrl;
         this.startDate = startDate;
         this.endDate = endDate;
