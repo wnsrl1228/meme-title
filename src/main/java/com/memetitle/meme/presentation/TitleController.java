@@ -3,6 +3,7 @@ package com.memetitle.meme.presentation;
 import com.memetitle.auth.Login;
 import com.memetitle.auth.dto.LoginMember;
 import com.memetitle.meme.dto.request.TitleCreateRequest;
+import com.memetitle.meme.dto.response.TitleDetailResponse;
 import com.memetitle.meme.dto.response.TitlesResponse;
 import com.memetitle.meme.service.TitleService;
 import lombok.RequiredArgsConstructor;
@@ -36,13 +37,19 @@ public class TitleController {
         return ResponseEntity.ok(titleService.getTitlesByMemeId(memeId));
     }
 
-    @DeleteMapping("/memes/{memeId}/titles/{titleId}")
+    @GetMapping("/titles/{titleId}")
+    public ResponseEntity<TitleDetailResponse> getTitleDetail(
+            @PathVariable final Long titleId
+    ) {
+        return ResponseEntity.ok(titleService.getTitleById(titleId));
+    }
+
+    @DeleteMapping("/titles/{titleId}")
     public ResponseEntity<Void> deleteTitle(
-            @PathVariable final Long memeId,
             @PathVariable final Long titleId,
             @Login final LoginMember loginMember
     ) {
-        titleService.deleteTitle(loginMember.getMemberId(), memeId, titleId);
+        titleService.deleteTitle(loginMember.getMemberId(), titleId);
         return ResponseEntity.noContent().build();
     }
 }

@@ -6,6 +6,7 @@ import com.memetitle.global.config.WebConfig;
 import com.memetitle.mebmer.dto.response.MemberResponse;
 import com.memetitle.meme.dto.TitleElement;
 import com.memetitle.meme.dto.request.TitleCreateRequest;
+import com.memetitle.meme.dto.response.TitleDetailResponse;
 import com.memetitle.meme.dto.response.TitlesResponse;
 import com.memetitle.meme.service.TitleService;
 import org.junit.jupiter.api.BeforeEach;
@@ -118,12 +119,38 @@ class TitleControllerTest {
     }
 
     @Test
+    @DisplayName("밈 제목 상세 정보 요청에 성공한다.")
+    void getTitleDetail_success() throws Exception {
+        // given
+        Long titleId = 1L;
+        MemberResponse memberResponse = MemberResponse.builder()
+                .id(1L)
+                .nickname("닉네임")
+                .imgUrl("imgUrl").build();
+
+        TitleDetailResponse titleDetailResponse = TitleDetailResponse.builder()
+                .title("제목")
+                .memeId(1L)
+                .member(memberResponse)
+                .build();
+
+        given(titleService.getTitleById(any())).willReturn(titleDetailResponse);
+
+        // when, then
+        mockMvc.perform(MockMvcRequestBuilders.get("/titles/{titleId}", titleId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(titleDetailResponse)));
+    }
+
+    @Test
     @DisplayName("밈 제목 삭제 요청에 성공한다.")
     void deleteTitle_success() throws Exception {
         // given
         Long memeId = 1L;
         Long titleId = 1L;
-        doNothing().when(titleService).deleteTitle(any(), any(), any());
+        doNothing().when(titleService).deleteTitle(any(), any());
 
         // when, then
         mockMvc.perform(MockMvcRequestBuilders.delete("/memes/{memeId}/titles/{titleId}", memeId, titleId)

@@ -5,6 +5,7 @@ import com.memetitle.mebmer.domain.Member;
 import com.memetitle.mebmer.repository.MemberRepository;
 import com.memetitle.meme.domain.Title;
 import com.memetitle.meme.dto.request.TitleCreateRequest;
+import com.memetitle.meme.dto.response.TitleDetailResponse;
 import com.memetitle.meme.dto.response.TitlesResponse;
 import com.memetitle.meme.repository.MemeRepository;
 import com.memetitle.meme.repository.TitleRepository;
@@ -49,12 +50,17 @@ public class TitleService {
         return TitlesResponse.ofTitles(titles);
     }
 
-    public void deleteTitle(Long memberId, Long memeId, Long titleId) {
+    @Transactional(readOnly = true)
+    public TitleDetailResponse getTitleById(Long titleId) {
+        Title title = titleRepository.findById(titleId)
+                .orElseThrow(() -> new InvalidException(NOT_FOUND_TITLE_ID));
+
+        return TitleDetailResponse.of(title);
+    }
+
+    public void deleteTitle(Long memberId, Long titleId) {
         if(!memberRepository.existsById(memberId)) {
             throw new InvalidException(NOT_FOUND_MEMBER_ID);
-        }
-        if (!memeRepository.existsById(memeId)) {
-            throw new InvalidException(NOT_FOUND_MEME_ID);
         }
         final Title title = titleRepository.findById(titleId)
                 .orElseThrow(() -> new InvalidException(NOT_FOUND_TITLE_ID));
@@ -65,4 +71,5 @@ public class TitleService {
 
         titleRepository.deleteById(titleId);
     }
+
 }

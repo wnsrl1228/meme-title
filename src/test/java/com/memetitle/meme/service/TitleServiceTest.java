@@ -8,6 +8,7 @@ import com.memetitle.meme.domain.Meme;
 import com.memetitle.meme.domain.Title;
 import com.memetitle.meme.dto.TitleElement;
 import com.memetitle.meme.dto.request.TitleCreateRequest;
+import com.memetitle.meme.dto.response.TitleDetailResponse;
 import com.memetitle.meme.dto.response.TitlesResponse;
 import com.memetitle.meme.repository.MemeRepository;
 import com.memetitle.meme.repository.TitleRepository;
@@ -115,10 +116,24 @@ class TitleServiceTest {
     }
 
     @Test
+    @DisplayName("밈 제목 상세 정보 불러오기를 성공한다.")
+    void getTitleDetail_success() {
+        // when
+        TitleDetailResponse titleDetailResponse = titleService.getTitleById(initTitle.getId());
+
+        // then
+        assertThat(titleDetailResponse.getId()).isEqualTo(initTitle.getId());
+        assertThat(titleDetailResponse.getTitle()).isEqualTo(initTitle.getTitle());
+        assertThat(titleDetailResponse.getMemeId()).isEqualTo(initTitle.getMemeId());
+        assertThat(titleDetailResponse.getMember().getId()).isEqualTo(initTitle.getMember().getId());
+        assertThat(titleDetailResponse.getCreatedAt()).isEqualTo(initTitle.getCreatedAt());
+    }
+
+    @Test
     @DisplayName("밈 제목 삭제를 성공한다.")
     void deleteTitle_success() {
         // when
-        titleService.deleteTitle(initMember.getId(), initMeme.getId(), initTitle.getId());
+        titleService.deleteTitle(initMember.getId(), initTitle.getId());
 
         // then
         assertThat(titleRepository.existsById(initTitle.getId())).isEqualTo(false);
@@ -131,7 +146,7 @@ class TitleServiceTest {
         Member newMember = memberRepository.save(new Member("111", "111", "111"));
 
         // when & then
-        assertThatThrownBy(() -> titleService.deleteTitle(newMember.getId(), initMeme.getId(), initTitle.getId()))
+        assertThatThrownBy(() -> titleService.deleteTitle(newMember.getId(), initTitle.getId()))
                  .isInstanceOf(InvalidException.class)
                          .hasMessage(ErrorCode.TITLE_ACCESS_DENIED.getMessage());
     }
