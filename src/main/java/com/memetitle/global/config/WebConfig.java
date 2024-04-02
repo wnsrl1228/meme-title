@@ -40,7 +40,8 @@ public class WebConfig implements WebMvcConfigurer {
         return interceptor
                 .includePathPattern("/memes", PathMethod.POST)
                 .includePathPattern("/memes/{memeId}", PathMethod.POST)
-                .includePathPattern("/member/profile", PathMethod.GET);
+                .includePathPattern("/member/profile", PathMethod.GET)
+                .includePathPattern("/memes/{memeId}/titles/{titleId}", PathMethod.DELETE);
     }
 
     @Override

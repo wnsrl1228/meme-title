@@ -40,4 +40,12 @@ public class Title {
         this.title = title;
     }
 
+    public boolean isOwner(Long memberId) {
+        return this.member.getId() == memberId;
+    }
+
+    public boolean isNotOwner(Long memberId) {
+        return this.member.getId() != memberId;
+    }
+
 }

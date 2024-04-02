@@ -11,6 +11,7 @@ public enum ErrorCode {
     NOT_FOUND_MEMBER_ID(2000, "해당 멤버를 찾을 수 없습니다."),
     NOT_FOUND_MEME_ID(2001, "해당 밈을 찾을 수 없습니다."),
     NOT_FOUND_TITLE_ID(2002, "해당 제목을 찾을 수 없습니다."),
+    TITLE_ACCESS_DENIED(2011, "해당 제목에 대한 권한이 없습니다."),
     INVALID_AUTHORIZATION_CODE(4001, "유효하지 않은 인가 코드입니다."),
     INVALID_TOKEN(4002, "유효하지 않은 토큰입니다."),
     EXPIRED_TOKEN(4003, "만료된 토큰입니다."),

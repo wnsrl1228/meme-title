@@ -16,7 +16,7 @@ import java.net.URI;
 @RestController
 public class TitleController {
 
-    private final TitleService memeTitleService;
+    private final TitleService titleService;
 
     @PostMapping("/memes/{memeId}")
     public ResponseEntity<Void> createTitle(
@@ -25,7 +25,7 @@ public class TitleController {
             @Login final LoginMember loginMember
 
     ) {
-        final Long titleId = memeTitleService.saveTitle(loginMember.getMemberId(), memeId, titleCreateRequest);
+        final Long titleId = titleService.saveTitle(loginMember.getMemberId(), memeId, titleCreateRequest);
         return ResponseEntity.created(URI.create("/memes/" + memeId + "/titles/" + titleId)).build();
     }
 
@@ -33,6 +33,16 @@ public class TitleController {
     public ResponseEntity<TitlesResponse> getTitlesForMeme(
             @PathVariable final Long memeId
     ) {
-        return ResponseEntity.ok(memeTitleService.getTitlesByMemeId(memeId));
+        return ResponseEntity.ok(titleService.getTitlesByMemeId(memeId));
+    }
+
+    @DeleteMapping("/memes/{memeId}/titles/{titleId}")
+    public ResponseEntity<Void> deleteTitle(
+            @PathVariable final Long memeId,
+            @PathVariable final Long titleId,
+            @Login final LoginMember loginMember
+    ) {
+        titleService.deleteTitle(loginMember.getMemberId(), memeId, titleId);
+        return ResponseEntity.noContent().build();
     }
 }

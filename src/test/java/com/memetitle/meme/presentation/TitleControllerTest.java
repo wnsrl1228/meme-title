@@ -25,6 +25,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.LOCATION;
 
@@ -114,5 +115,21 @@ class TitleControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(titlesResponse)));
+    }
+
+    @Test
+    @DisplayName("밈 제목 삭제 요청에 성공한다.")
+    void deleteTitle_success() throws Exception {
+        // given
+        Long memeId = 1L;
+        Long titleId = 1L;
+        doNothing().when(titleService).deleteTitle(any(), any(), any());
+
+        // when, then
+        mockMvc.perform(MockMvcRequestBuilders.delete("/memes/{memeId}/titles/{titleId}", memeId, titleId)
+                        .header(AUTHORIZATION, "Bearer access-token")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
 }

@@ -113,4 +113,26 @@ class TitleServiceTest {
         assertThat(titleElement.getMember().getId()).isEqualTo(initTitle.getMember().getId());
         assertThat(titleElement.getCreatedAt()).isEqualTo(initTitle.getCreatedAt());
     }
+
+    @Test
+    @DisplayName("밈 제목 삭제를 성공한다.")
+    void deleteTitle_success() {
+        // when
+        titleService.deleteTitle(initMember.getId(), initMeme.getId(), initTitle.getId());
+
+        // then
+        assertThat(titleRepository.existsById(initTitle.getId())).isEqualTo(false);
+    }
+
+    @Test
+    @DisplayName("밈 제목에 권한이 없는 사용자가 삭제할 경우 예외가 발생한다.")
+    void deleteTitle_TITLE_ACCESS_DENIED() {
+        // given
+        Member newMember = memberRepository.save(new Member("111", "111", "111"));
+
+        // when & then
+        assertThatThrownBy(() -> titleService.deleteTitle(newMember.getId(), initMeme.getId(), initTitle.getId()))
+                 .isInstanceOf(InvalidException.class)
+                         .hasMessage(ErrorCode.TITLE_ACCESS_DENIED.getMessage());
+    }
 }
