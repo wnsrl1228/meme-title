@@ -51,14 +51,14 @@ public class TitleService {
     }
 
     @Transactional(readOnly = true)
-    public TitleDetailResponse getTitleById(Long titleId) {
-        Title title = titleRepository.findById(titleId)
+    public TitleDetailResponse getTitleById(final Long titleId) {
+        final Title title = titleRepository.findById(titleId)
                 .orElseThrow(() -> new InvalidException(NOT_FOUND_TITLE_ID));
 
         return TitleDetailResponse.of(title);
     }
 
-    public void deleteTitle(Long memberId, Long titleId) {
+    public void deleteTitle(final Long memberId, final Long titleId) {
         if(!memberRepository.existsById(memberId)) {
             throw new InvalidException(NOT_FOUND_MEMBER_ID);
         }

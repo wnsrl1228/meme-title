@@ -148,12 +148,11 @@ class TitleControllerTest {
     @DisplayName("밈 제목 삭제 요청에 성공한다.")
     void deleteTitle_success() throws Exception {
         // given
-        Long memeId = 1L;
         Long titleId = 1L;
         doNothing().when(titleService).deleteTitle(any(), any());
 
         // when, then
-        mockMvc.perform(MockMvcRequestBuilders.delete("/memes/{memeId}/titles/{titleId}", memeId, titleId)
+        mockMvc.perform(MockMvcRequestBuilders.delete("/titles/{titleId}", titleId)
                         .header(AUTHORIZATION, "Bearer access-token")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))

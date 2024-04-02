@@ -37,4 +37,22 @@ public class Comment {
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+    public Comment(String content, Member member, Title title) {
+        this.content = content;
+        this.member = member;
+        this.title = title;
+    }
+
+    public void updateContent(String content) {
+        this.content = content;
+    }
+
+    public boolean isOwner(Long memberId) {
+        return this.member.getId() == memberId;
+    }
+
+    public boolean isNotOwner(Long memberId) {
+        return this.member.getId() != memberId;
+    }
 }
