@@ -1,4 +1,4 @@
-package com.memetitle.mebmer.domain;
+package com.memetitle.member.domain;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -49,5 +49,13 @@ public class Member {
         this.email = email;
         this.nickname = nickname;
         status = MemberState.ACTIVE;
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void updateImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
     }
 }

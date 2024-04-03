@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface TitleRepository extends JpaRepository<Title, Long> {
     List<Title> findByMemeId(Long memeId);
+
+    List<Title> findByMemberId(Long memberId);
 }

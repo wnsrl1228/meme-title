@@ -8,8 +8,8 @@ import com.memetitle.auth.infrastructure.OauthProvider;
 import com.memetitle.auth.repository.RefreshTokenRepository;
 import com.memetitle.global.exception.AuthException;
 import com.memetitle.global.exception.ErrorCode;
-import com.memetitle.mebmer.domain.Member;
-import com.memetitle.mebmer.repository.MemberRepository;
+import com.memetitle.member.domain.Member;
+import com.memetitle.member.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 
 @SpringBootTest

@@ -1,8 +1,7 @@
 package com.memetitle.comment.dto;
 
 import com.memetitle.comment.domain.Comment;
-import com.memetitle.mebmer.dto.response.MemberResponse;
-import com.memetitle.meme.domain.Title;
+import com.memetitle.member.dto.response.MemberResponse;
 import lombok.Builder;
 import lombok.Getter;
 

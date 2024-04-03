@@ -1,6 +1,6 @@
-package com.memetitle.mebmer.dto.response;
+package com.memetitle.member.dto.response;
 
-import com.memetitle.mebmer.domain.Member;
+import com.memetitle.member.domain.Member;
 import lombok.Builder;
 import lombok.Getter;
 

@@ -44,7 +44,9 @@ public class WebConfig implements WebMvcConfigurer {
                 .includePathPattern("/memes/{memeId}/titles/{titleId}", PathMethod.DELETE)
                 .includePathPattern("/titles/{titleId}/comments", PathMethod.POST)
                 .includePathPattern("/comments/{commentId}", PathMethod.PATCH)
-                .includePathPattern("/comments/{commentId}", PathMethod.DELETE);
+                .includePathPattern("/comments/{commentId}", PathMethod.DELETE)
+                .includePathPattern("/member/titles", PathMethod.GET)
+                .includePathPattern("/member/comments", PathMethod.GET);
     }
 
     @Override

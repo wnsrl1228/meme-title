@@ -3,7 +3,7 @@ package com.memetitle.meme.presentation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.memetitle.auth.infrastructure.JwtProvider;
 import com.memetitle.global.config.WebConfig;
-import com.memetitle.mebmer.dto.response.MemberResponse;
+import com.memetitle.member.dto.response.MemberResponse;
 import com.memetitle.meme.dto.TitleElement;
 import com.memetitle.meme.dto.request.TitleCreateRequest;
 import com.memetitle.meme.dto.response.TitleDetailResponse;
@@ -23,7 +23,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;

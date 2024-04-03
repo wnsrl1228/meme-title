@@ -14,6 +14,9 @@ public enum ErrorCode {
     NOT_FOUND_COMMENT_ID(2003, "해당 댓글을 찾을 수 없습니다."),
     TITLE_ACCESS_DENIED(2012, "해당 제목에 대한 권한이 없습니다."),
     COMMENT_ACCESS_DENIED(2013, "해당 댓글에 대한 권한이 없습니다."),
+
+    DUPLICATE_NICKNAME(3000, "이미 존재하는 닉네임입니다."),
+
     INVALID_AUTHORIZATION_CODE(4001, "유효하지 않은 인가 코드입니다."),
     INVALID_TOKEN(4002, "유효하지 않은 토큰입니다."),
     EXPIRED_TOKEN(4003, "만료된 토큰입니다."),

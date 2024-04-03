@@ -1,8 +1,8 @@
 package com.memetitle.meme.service;
 
 import com.memetitle.global.exception.InvalidException;
-import com.memetitle.mebmer.domain.Member;
-import com.memetitle.mebmer.repository.MemberRepository;
+import com.memetitle.member.domain.Member;
+import com.memetitle.member.repository.MemberRepository;
 import com.memetitle.meme.domain.Title;
 import com.memetitle.meme.dto.request.TitleCreateRequest;
 import com.memetitle.meme.dto.response.TitleDetailResponse;

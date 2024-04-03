@@ -17,8 +17,7 @@ public class PathMatcherInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
                              Object handler) throws Exception {
-
-        if (pathContainer.notIncludedPath(request.getServletPath(), request.getMethod())) {
+        if (pathContainer.notIncludedPath(request.getRequestURI(), request.getMethod())) {
             return true;
         }
 

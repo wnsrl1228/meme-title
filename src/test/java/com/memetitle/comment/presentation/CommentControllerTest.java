@@ -8,7 +8,7 @@ import com.memetitle.comment.dto.request.CommentModifyRequest;
 import com.memetitle.comment.dto.response.CommentsResponse;
 import com.memetitle.comment.service.CommentService;
 import com.memetitle.global.config.WebConfig;
-import com.memetitle.mebmer.dto.response.MemberResponse;
+import com.memetitle.member.dto.response.MemberResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
@@ -36,10 +35,13 @@ class CommentControllerTest {
     private static final String SAMPLE_COMMENT = "댓글입니다.";
     @Autowired
     private MockMvc mockMvc;
+
     @Autowired
     protected ObjectMapper objectMapper;
+
     @MockBean
     private CommentService commentService;
+
     @MockBean
     private JwtProvider jwtProvider;
 

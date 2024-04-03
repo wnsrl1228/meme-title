@@ -1,6 +1,6 @@
 package com.memetitle.meme.domain;
 
-import com.memetitle.mebmer.domain.Member;
+import com.memetitle.member.domain.Member;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

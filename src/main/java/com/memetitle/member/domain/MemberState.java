@@ -1,4 +1,4 @@
-package com.memetitle.mebmer.domain;
+package com.memetitle.member.domain;
 
 public enum MemberState {
     ACTIVE,
