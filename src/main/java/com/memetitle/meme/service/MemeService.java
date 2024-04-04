@@ -4,10 +4,14 @@ import com.memetitle.meme.domain.Meme;
 import com.memetitle.meme.dto.response.MemesResponse;
 import com.memetitle.meme.repository.MemeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -19,8 +23,8 @@ public class MemeService {
     private final MemeRepository memeRepository;
 
     public Long saveMeme(final String imgUrl, final String imgOriginalName) {
-        final LocalDate startDate = LocalDate.now();
-        final LocalDate endDate = startDate.plusDays(7);
+        final LocalDateTime startDate = LocalDateTime.now();
+        final LocalDateTime endDate = startDate.plusDays(7);
         final Meme meme = new Meme(
                 imgOriginalName,
                 imgUrl,
@@ -32,8 +36,8 @@ public class MemeService {
     }
 
     @Transactional(readOnly = true)
-    public MemesResponse getMemeAll() {
-        final List<Meme> memes = memeRepository.findAll();
+    public MemesResponse getPageableMemes(final Pageable pageable) {
+        Slice<Meme> memes = memeRepository.findAll(pageable);
         return MemesResponse.ofMemes(memes);
     }
 

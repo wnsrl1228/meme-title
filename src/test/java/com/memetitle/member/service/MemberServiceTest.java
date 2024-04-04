@@ -28,6 +28,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -64,7 +65,7 @@ class MemberServiceTest {
 
     @BeforeEach
     void init() {
-        initMeme = memeRepository.save(new Meme("test.jpg", IMG_URL, LocalDate.now(), LocalDate.now()));
+        initMeme = memeRepository.save(new Meme("test.jpg", IMG_URL, LocalDateTime.now(), LocalDateTime.now()));
         initMember = memberRepository.save(new Member(SAMPLE_SNSTOKENID, SAMPLE_EMAIL, SAMPLE_NICKNAME));
         initTitle = titleRepository.save(new Title(initMeme.getId(), initMember, SAMPLE_TITLE));
         initComment = commentRepository.save(new Comment(SAMPLE_COMMENT, initMember, initTitle));

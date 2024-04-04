@@ -22,8 +22,8 @@ public class MemeElement {
                 .id(meme.getId())
                 .imgOriginalName(meme.getImgOriginalName())
                 .imgUrl(meme.getImgUrl())
-                .startDate(meme.getStartDate())
-                .endDate(meme.getEndDate())
+                .startDate(meme.getStartDate().toLocalDate())
+                .endDate(meme.getEndDate().toLocalDate())
                 .build();
     }
 }

@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -23,12 +24,12 @@ public class Meme {
     private String imgUrl;
 
     @Column(nullable = false)
-    private LocalDate startDate;
+    private LocalDateTime startDate;
 
     @Column(nullable = false)
-    private LocalDate endDate;
+    private LocalDateTime endDate;
 
-    public Meme(String imgOriginalName, String imgUrl, LocalDate startDate, LocalDate endDate) {
+    public Meme(String imgOriginalName, String imgUrl, LocalDateTime startDate, LocalDateTime endDate) {
         this.imgOriginalName = imgOriginalName;
         this.imgUrl = imgUrl;
         this.startDate = startDate;

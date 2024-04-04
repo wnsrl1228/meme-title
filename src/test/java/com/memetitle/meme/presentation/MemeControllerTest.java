@@ -23,7 +23,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -84,8 +83,9 @@ class MemeControllerTest {
 
         MemesResponse memesResponse = MemesResponse.builder()
                 .memes(memeElements)
+                .isLast(true)
                 .build();
-        given(memeService.getMemeAll()).willReturn(memesResponse);
+        given(memeService.getPageableMemes(any())).willReturn(memesResponse);
 
         // when, then
         mockMvc.perform(MockMvcRequestBuilders.get("/memes")
