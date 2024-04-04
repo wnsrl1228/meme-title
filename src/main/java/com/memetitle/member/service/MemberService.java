@@ -14,6 +14,9 @@ import com.memetitle.meme.domain.Title;
 import com.memetitle.meme.dto.response.TitlesResponse;
 import com.memetitle.meme.repository.TitleRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,22 +35,22 @@ public class MemberService {
     private final CommentRepository commentRepository;
 
     @Transactional(readOnly = true)
-    public ProfileResponse getProfile(Long memberId) {
-        Member member = memberRepository.findById(memberId)
+    public ProfileResponse getProfile(final Long memberId) {
+        final Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new RuntimeException("해당 유저가 존재하지 않습니다."));
 
         return ProfileResponse.of(member);
     }
 
     @Transactional(readOnly = true)
-    public OtherProfileResponse getOtherProfile(Long memberId) {
-        Member member = memberRepository.findById(memberId)
+    public OtherProfileResponse getOtherProfile(final Long memberId) {
+        final Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new RuntimeException("해당 유저가 존재하지 않습니다."));
 
         return OtherProfileResponse.of(member);
     }
 
-    public void updateProfile(Long memberId, ProfileModifyRequest profileModifyRequest) {
+    public void updateProfile(final Long memberId, final ProfileModifyRequest profileModifyRequest) {
         final Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new InvalidException(NOT_FOUND_MEMBER_ID));
 
@@ -64,26 +67,26 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public TitlesResponse getTitlesByMemberId(Long memberId) {
+    public TitlesResponse getPageableTitlesByMemberId(final Long memberId, final Pageable pageable) {
         if(!memberRepository.existsById(memberId)) {
             throw new InvalidException(NOT_FOUND_MEMBER_ID);
         }
-        List<Title> titles = titleRepository.findByMemberId(memberId);
+        final Slice<Title> titles = titleRepository.findByMemberId(memberId, pageable);
 
         return TitlesResponse.ofTitles(titles);
     }
 
     @Transactional(readOnly = true)
-    public CommentsResponse getCommentsByMemberId(Long memberId) {
+    public CommentsResponse getPageableCommentsByMemberId(final Long memberId, final Pageable pageable) {
         if(!memberRepository.existsById(memberId)) {
             throw new InvalidException(NOT_FOUND_MEMBER_ID);
         }
-        final List<Comment> comments = commentRepository.findByMemberId(memberId);
+        final Page<Comment> comments = commentRepository.findByMemberId(memberId, pageable);
 
         return CommentsResponse.ofComments(comments);
     }
 
-    private void validateNicknameUniqueness(String newNickname) {
+    private void validateNicknameUniqueness(final String newNickname) {
         if (memberRepository.existsByNickname(newNickname)) {
             throw new InvalidException(DUPLICATE_NICKNAME);
         }

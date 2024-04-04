@@ -7,11 +7,15 @@ import com.memetitle.meme.dto.response.TitleDetailResponse;
 import com.memetitle.meme.dto.response.TitlesResponse;
 import com.memetitle.meme.service.TitleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
+
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @RequiredArgsConstructor
 @RestController
@@ -32,9 +36,10 @@ public class TitleController {
 
     @GetMapping("/memes/{memeId}/titles")
     public ResponseEntity<TitlesResponse> getTitlesForMeme(
-            @PathVariable final Long memeId
+            @PathVariable final Long memeId,
+            @PageableDefault(sort = "createdAt", direction = DESC) final Pageable pageable
     ) {
-        return ResponseEntity.ok(titleService.getTitlesByMemeId(memeId));
+        return ResponseEntity.ok(titleService.getPageableTitlesByMemeId(memeId, pageable));
     }
 
     @GetMapping("/titles/{titleId}")

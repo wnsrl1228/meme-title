@@ -105,9 +105,10 @@ class TitleControllerTest {
 
         TitlesResponse titlesResponse = TitlesResponse.builder()
                 .titles(titles)
+                .isLast(true)
                 .build();
 
-        given(titleService.getTitlesByMemeId(any())).willReturn(titlesResponse);
+        given(titleService.getPageableTitlesByMemeId(any(), any())).willReturn(titlesResponse);
 
         // when, then
         mockMvc.perform(MockMvcRequestBuilders.get("/memes/{memeId}/titles", memeId)

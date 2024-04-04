@@ -9,10 +9,14 @@ import com.memetitle.member.dto.response.ProfileResponse;
 import com.memetitle.member.service.MemberService;
 import com.memetitle.meme.dto.response.TitlesResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @RequiredArgsConstructor
 @RestController
@@ -45,15 +49,17 @@ public class MemberController {
 
     @GetMapping("/member/titles")
     public ResponseEntity<TitlesResponse> getTitlesForMember(
-            @Login final LoginMember loginMember
+            @Login final LoginMember loginMember,
+            @PageableDefault(sort = "createdAt", direction = DESC) final Pageable pageable
     ) {
-        return ResponseEntity.ok().body(memberService.getTitlesByMemberId(loginMember.getMemberId()));
+        return ResponseEntity.ok().body(memberService.getPageableTitlesByMemberId(loginMember.getMemberId(), pageable));
     }
 
     @GetMapping("/member/comments")
     public ResponseEntity<CommentsResponse> getCommentsForMember(
-            @Login final LoginMember loginMember
+            @Login final LoginMember loginMember,
+            @PageableDefault(sort = "createdAt", direction = DESC) final Pageable pageable
     ) {
-        return ResponseEntity.ok().body(memberService.getCommentsByMemberId(loginMember.getMemberId()));
+        return ResponseEntity.ok().body(memberService.getPageableCommentsByMemberId(loginMember.getMemberId(), pageable));
     }
 }

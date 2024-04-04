@@ -23,6 +23,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.parameters.P;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +34,7 @@ import java.time.LocalDateTime;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @SpringBootTest
 @Transactional
@@ -123,10 +125,10 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("내가 쓴 제목 목록 불러오기를 성공한다.")
-    void getTitlesByMemberId_success() {
+    @DisplayName("내가 쓴 제목 페이징 목록 불러오기를 성공한다.")
+    void getPageableTitlesByMemberId_success() {
         // when
-        TitlesResponse titlesResponse = memberService.getTitlesByMemberId(initMember.getId());
+        TitlesResponse titlesResponse = memberService.getPageableTitlesByMemberId(initMember.getId(), PageRequest.of(0, 3, DESC, "createdAt"));
         TitleElement titleElement = titlesResponse.getTitles().get(0);
 
         // then
@@ -136,10 +138,10 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("내가 쓴 댓글 목록 불러오기를 성공한다.")
-    void getCommentsByMemberId_success() {
+    @DisplayName("내가 쓴 댓글 페이징 목록 불러오기를 성공한다.")
+    void getPageableCommentsByMemberId_success() {
         // when
-        CommentsResponse commentsResponse = memberService.getCommentsByMemberId(initMember.getId());
+        CommentsResponse commentsResponse = memberService.getPageableCommentsByMemberId(initMember.getId(), PageRequest.of(0, 3, DESC, "createdAt"));
         CommentElement commentElement = commentsResponse.getComments().get(0);
 
         // then

@@ -91,9 +91,13 @@ class CommentControllerTest {
 
         CommentsResponse commentsResponse = CommentsResponse.builder()
                 .comments(comments)
+                .isEmpty(false)
+                .page(0)
+                .totalElement(1L)
+                .totalPages(1)
                 .build();
 
-        given(commentService.getCommentsByTitleId(any())).willReturn(commentsResponse);
+        given(commentService.getPageableCommentsByTitleId(any(), any())).willReturn(commentsResponse);
 
         // when, then
         mockMvc.perform(MockMvcRequestBuilders.get("/titles/{titleId}/comments", titleId)

@@ -10,6 +10,8 @@ import com.memetitle.meme.dto.response.TitlesResponse;
 import com.memetitle.meme.repository.MemeRepository;
 import com.memetitle.meme.repository.TitleRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,11 +44,11 @@ public class TitleService {
     }
 
     @Transactional(readOnly = true)
-    public TitlesResponse getTitlesByMemeId(final Long memeId) {
+    public TitlesResponse getPageableTitlesByMemeId(final Long memeId, final Pageable pageable) {
         if (!memeRepository.existsById(memeId)) {
             throw new InvalidException(NOT_FOUND_MEME_ID);
         }
-        final List<Title> titles = titleRepository.findByMemeId(memeId);
+        final Slice<Title> titles = titleRepository.findByMemeId(memeId, pageable);
         return TitlesResponse.ofTitles(titles);
     }
 

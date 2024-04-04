@@ -44,15 +44,16 @@ class MemeServiceTest {
         assertThat(meme.getId()).isEqualTo(memeId);
         assertThat(meme.getImgUrl()).isEqualTo(IMG_URL);
         assertThat(meme.getImgOriginalName()).isEqualTo(IMG_ORIGINAL_NAME);
-        assertThat(meme.getStartDate()).isEqualTo(LocalDate.now());
-        assertThat(meme.getEndDate()).isEqualTo(LocalDate.now().plusDays(7));
+        assertThat(meme.getStartDate().toLocalDate()).isEqualTo(LocalDate.now());
+        assertThat(meme.getEndDate().toLocalDate()).isEqualTo(LocalDate.now().plusDays(7));
     }
 
     @Test
     @DisplayName("페이징 처리된 밈 조회에 성공한다.")
-    void getPageableMemes_success() {
+    void getPageableMemes_success() throws InterruptedException {
         // given
         for (int i=1;i<=21;i++) {
+            Thread.sleep(1);
             memeService.saveMeme(IMG_URL, IMG_ORIGINAL_NAME);
         }
 

@@ -19,15 +19,19 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @SpringBootTest
 @Transactional
@@ -84,16 +88,25 @@ class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("해당 제목의 전체 댓글 목록 불러오기를 성공한다.")
-    void getCommentsByTitleId_success() {
+    @DisplayName("해당 제목의 댓글 페이징 목록 불러오기를 성공한다.")
+    void getCommentsByTitleId_success() throws InterruptedException {
+        // given
+        for(int id=2;id<=4;id++) {
+            Thread.sleep(1);
+            commentRepository.save(new Comment(SAMPLE_COMMENT, initMember, initTitle));
+        }
+
         // when
-        CommentsResponse commentsResponse = commentService.getCommentsByTitleId(initTitle.getId());
-        CommentElement commentElement = commentsResponse.getComments().get(0);
+        CommentsResponse commentsResponse = commentService.getPageableCommentsByTitleId(initTitle.getId(), PageRequest.of(0, 3, DESC, "createdAt"));
+        List<CommentElement> comments = commentsResponse.getComments();
 
         // then
-        assertThat(commentsResponse.getComments().size()).isEqualTo(1);
-        assertThat(commentElement.getTitleId()).isEqualTo(initTitle.getId());
-        assertThat(commentElement.getContent()).isEqualTo(initComment.getContent());
+        assertThat(comments.size()).isEqualTo(3);
+        assertThat(commentsResponse.getIsEmpty()).isEqualTo(false);
+        assertThat(commentsResponse.getPage()).isEqualTo(0);
+        assertThat(commentsResponse.getTotalPages()).isEqualTo(2);
+        assertThat(commentsResponse.getTotalElement()).isEqualTo(4);
+        assertThat(comments.get(0).getId()).isEqualTo(4);
     }
 
     @Test

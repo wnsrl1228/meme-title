@@ -135,9 +135,11 @@ class MemberControllerTest {
 
         TitlesResponse titlesResponse = TitlesResponse.builder()
                 .titles(titles)
+                .isLast(true)
+                .isEmpty(false)
                 .build();
 
-        given(memberService.getTitlesByMemberId(any())).willReturn(titlesResponse);
+        given(memberService.getPageableTitlesByMemberId(any(), any())).willReturn(titlesResponse);
 
         // when, then
         mockMvc.perform(MockMvcRequestBuilders.get("/member/titles")
@@ -170,9 +172,13 @@ class MemberControllerTest {
 
         CommentsResponse commentsResponse = CommentsResponse.builder()
                 .comments(comments)
+                .totalPages(1)
+                .page(1)
+                .isEmpty(false)
+                .totalElement(1L)
                 .build();
 
-        given(memberService.getCommentsByMemberId(any())).willReturn(commentsResponse);
+        given(memberService.getPageableCommentsByMemberId(any(), any())).willReturn(commentsResponse);
 
         // when, then
         mockMvc.perform(MockMvcRequestBuilders.get("/member/comments")

@@ -25,6 +25,5 @@ public class TitleElement {
                 .member(MemberResponse.of(title.getMember()))
                 .createdAt(title.getCreatedAt())
                 .build();
-
     }
 }

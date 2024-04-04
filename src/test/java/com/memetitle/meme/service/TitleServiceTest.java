@@ -17,14 +17,18 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @SpringBootTest
 @Transactional
@@ -101,19 +105,22 @@ class TitleServiceTest {
     }
 
     @Test
-    @DisplayName("밈 제목 목록 불러오기를 성공한다.")
-    void getTitlesByMemeId_success() {
+    @DisplayName("밈 제목 페이징 목록 불러오기를 성공한다.")
+    void getPageableTitlesByMemeId_success() throws InterruptedException {
+        // given
+        for (int id=2;id<=4;id++) {
+            Thread.sleep(1);
+            titleRepository.save(new Title(initMeme.getId(), initMember, "안녕!"));
+        }
+
         // when
-        TitlesResponse titlesResponse = titleService.getTitlesByMemeId(initMeme.getId());
-        TitleElement titleElement = titlesResponse.getTitles().get(0);
+        TitlesResponse titlesResponse = titleService.getPageableTitlesByMemeId(initMeme.getId(), PageRequest.of(0, 3, DESC, "createdAt"));
+        List<TitleElement> titles = titlesResponse.getTitles();
 
         // then
-        assertThat(titlesResponse.getTitles().size()).isEqualTo(1);
-        assertThat(titleElement.getId()).isEqualTo(initTitle.getId());
-        assertThat(titleElement.getTitle()).isEqualTo(initTitle.getTitle());
-        assertThat(titleElement.getMemeId()).isEqualTo(initTitle.getMemeId());
-        assertThat(titleElement.getMember().getId()).isEqualTo(initTitle.getMember().getId());
-        assertThat(titleElement.getCreatedAt()).isEqualTo(initTitle.getCreatedAt());
+        assertThat(titles.size()).isEqualTo(3);
+        assertThat(titlesResponse.getIsLast()).isEqualTo(false);
+        assertThat(titles.get(0).getId()).isEqualTo(4);
     }
 
     @Test

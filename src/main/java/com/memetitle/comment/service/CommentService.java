@@ -11,6 +11,8 @@ import com.memetitle.member.repository.MemberRepository;
 import com.memetitle.meme.domain.Title;
 import com.memetitle.meme.repository.TitleRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,12 +44,12 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public CommentsResponse getCommentsByTitleId(final Long titleId) {
+    public CommentsResponse getPageableCommentsByTitleId(final Long titleId, final Pageable pageable) {
         if(!titleRepository.existsById(titleId)) {
             throw new InvalidException(NOT_FOUND_TITLE_ID);
         }
 
-        final List<Comment> comments = commentRepository.findByTitleId(titleId);
+        final Page<Comment> comments = commentRepository.findByTitleId(titleId, pageable);
         return CommentsResponse.ofComments(comments);
     }
 

@@ -7,11 +7,15 @@ import com.memetitle.comment.dto.request.CommentModifyRequest;
 import com.memetitle.comment.dto.response.CommentsResponse;
 import com.memetitle.comment.service.CommentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
+
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @RequiredArgsConstructor
 @RestController
@@ -32,9 +36,10 @@ public class CommentController {
 
     @GetMapping("/titles/{titleId}/comments")
     public ResponseEntity<CommentsResponse> getCommentsForTitle(
-            @PathVariable final Long titleId
+            @PathVariable final Long titleId,
+            @PageableDefault(sort = "createdAt", direction = DESC) final Pageable pageable
     ) {
-        return ResponseEntity.ok().body(commentService.getCommentsByTitleId(titleId));
+        return ResponseEntity.ok().body(commentService.getPageableCommentsByTitleId(titleId, pageable));
     }
 
     @PatchMapping("/comments/{commentId}")
