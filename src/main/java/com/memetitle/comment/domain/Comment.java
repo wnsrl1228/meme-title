@@ -33,6 +33,9 @@ public class Comment {
     @JoinColumn(name = "title_id")
     private Title title;
 
+    @Column(nullable = false)
+    private int likeCount;
+
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;
@@ -40,6 +43,11 @@ public class Comment {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
+    @Transient
+    private Boolean isOwner = false;
+
+    @Transient
+    private Boolean isLiked = false;
     public Comment(String content, Member member, Title title) {
         this.content = content;
         this.member = member;
@@ -56,5 +64,17 @@ public class Comment {
 
     public boolean isNotOwner(Long memberId) {
         return this.member.getId() != memberId;
+    }
+
+    public void increaseLike() {
+        this.likeCount++;
+    }
+    public void decreaseLike() {
+        this.likeCount--;
+    }
+
+    public void updateCommentPermissions(Boolean isOwner, Boolean isLiked){
+        this.isOwner = isOwner;
+        this.isLiked = isLiked;
     }
 }

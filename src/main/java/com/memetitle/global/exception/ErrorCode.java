@@ -13,11 +13,13 @@ public enum ErrorCode {
     NOT_FOUND_TITLE_ID(2002, "해당 제목을 찾을 수 없습니다."),
     NOT_FOUND_COMMENT_ID(2003, "해당 댓글을 찾을 수 없습니다."),
     NOT_FOUND_TITLE_LIKE(2004, "해당 제목에 좋아요가 없습니다."),
+    NOT_FOUND_COMMENT_LIKE(2005, "해당 댓글에 좋아요가 없습니다."),
     TITLE_ACCESS_DENIED(2012, "해당 제목에 대한 권한이 없습니다."),
     COMMENT_ACCESS_DENIED(2013, "해당 댓글에 대한 권한이 없습니다."),
 
     DUPLICATE_NICKNAME(3000, "이미 존재하는 닉네임입니다."),
     DUPLICATE_TITLE_LIKE(3002, "이미 좋아요한 제목입니다."),
+    DUPLICATE_COMMENT_LIKE(3003, "이미 좋아요한 댓글입니다."),
     SELF_TITLE_LIKE_DISALLOWED(4002, "본인 제목에는 좋아요를 할 수 없습니다."),
     SELF_COMMENT_LIKE_DISALLOWED(4003, "본인 댓글에는 좋아요를 할 수 없습니다."),
 

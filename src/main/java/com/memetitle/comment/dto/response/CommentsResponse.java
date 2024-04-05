@@ -23,9 +23,6 @@ public class CommentsResponse {
                 .map(CommentElement::of)
                 .collect(Collectors.toList());
 
-        comments.getTotalElements();
-        comments.getTotalPages();
-        long a = comments.getNumber();
         return CommentsResponse.builder()
                 .comments(commentElement)
                 .page(comments.getNumber())

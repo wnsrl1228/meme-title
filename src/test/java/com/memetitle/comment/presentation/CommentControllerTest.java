@@ -84,6 +84,9 @@ class CommentControllerTest {
                 .titleId(1L)
                 .content(SAMPLE_COMMENT)
                 .member(memberResponse)
+                .likeCount(1)
+                .isOwner(true)
+                .isLiked(false)
                 .build();
 
         List<CommentElement> comments = new ArrayList<>();
@@ -97,7 +100,7 @@ class CommentControllerTest {
                 .totalPages(1)
                 .build();
 
-        given(commentService.getPageableCommentsByTitleId(any(), any())).willReturn(commentsResponse);
+        given(commentService.getPageableCommentsByTitleId(any(), any(), any())).willReturn(commentsResponse);
 
         // when, then
         mockMvc.perform(MockMvcRequestBuilders.get("/titles/{titleId}/comments", titleId)

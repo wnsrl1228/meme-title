@@ -37,9 +37,10 @@ public class CommentController {
     @GetMapping("/titles/{titleId}/comments")
     public ResponseEntity<CommentsResponse> getCommentsForTitle(
             @PathVariable final Long titleId,
-            @PageableDefault(sort = "createdAt", direction = DESC) final Pageable pageable
+            @PageableDefault(sort = "createdAt", direction = DESC) final Pageable pageable,
+            @Login LoginMember loginMember
     ) {
-        return ResponseEntity.ok().body(commentService.getPageableCommentsByTitleId(titleId, pageable));
+        return ResponseEntity.ok().body(commentService.getPageableCommentsByTitleId(loginMember.getMemberId(), titleId, pageable));
     }
 
     @PatchMapping("/comments/{commentId}")

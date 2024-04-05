@@ -23,10 +23,10 @@ public class TitleLikeService {
     private final MemberRepository memberRepository;
     private final TitleRepository titleRepository;
 
-    public Long saveLike(Long memberId, Long titleId) {
-        Member member = memberRepository.findById(memberId)
+    public Long saveLike(final Long memberId, final Long titleId) {
+        final Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new InvalidException(NOT_FOUND_MEMBER_ID));
-        Title title = titleRepository.findById(titleId)
+        final Title title = titleRepository.findById(titleId)
                 .orElseThrow(() -> new InvalidException(NOT_FOUND_TITLE_ID));
 
         if (title.getMember().getId() == member.getId()) {
@@ -39,22 +39,21 @@ public class TitleLikeService {
 
         title.increaseLike();
 
-        TitleLike titleLike = new TitleLike(member, title);
+        final TitleLike titleLike = new TitleLike(member, title);
         return titleLikeRepository.save(titleLike).getId();
     }
 
-    public void deleteLike(Long memberId, Long titleId) {
-        Member member = memberRepository.findById(memberId)
+    public void deleteLike(final Long memberId, final Long titleId) {
+        final Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new InvalidException(NOT_FOUND_MEMBER_ID));
-        Title title = titleRepository.findById(titleId)
+        final Title title = titleRepository.findById(titleId)
                 .orElseThrow(() -> new InvalidException(NOT_FOUND_TITLE_ID));
 
         if (title.getMember().getId() == member.getId()) {
             throw new InvalidException(SELF_TITLE_LIKE_DISALLOWED);
         }
-
         // 좋아요를 한 적이 없는 경우
-        TitleLike titleLike = titleLikeRepository.findByMemberAndTitle(member, title)
+        final TitleLike titleLike = titleLikeRepository.findByMemberAndTitle(member, title)
                         .orElseThrow(() -> new InvalidException(NOT_FOUND_TITLE_LIKE));
 
         title.decreaseLike();

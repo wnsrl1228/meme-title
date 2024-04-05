@@ -97,7 +97,7 @@ class CommentServiceTest {
         }
 
         // when
-        CommentsResponse commentsResponse = commentService.getPageableCommentsByTitleId(initTitle.getId(), PageRequest.of(0, 3, DESC, "createdAt"));
+        CommentsResponse commentsResponse = commentService.getPageableCommentsByTitleId(null, initTitle.getId(), PageRequest.of(0, 3, DESC, "createdAt"));
         List<CommentElement> comments = commentsResponse.getComments();
 
         // then

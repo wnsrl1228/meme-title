@@ -4,6 +4,7 @@ import com.memetitle.comment.domain.Comment;
 import com.memetitle.comment.dto.request.CommentCreateRequest;
 import com.memetitle.comment.dto.request.CommentModifyRequest;
 import com.memetitle.comment.dto.response.CommentsResponse;
+import com.memetitle.comment.repository.CommentLikeRepository;
 import com.memetitle.comment.repository.CommentRepository;
 import com.memetitle.global.exception.InvalidException;
 import com.memetitle.member.domain.Member;
@@ -26,6 +27,7 @@ import static com.memetitle.global.exception.ErrorCode.*;
 public class CommentService {
 
     private final CommentRepository commentRepository;
+    private final CommentLikeRepository commentLikeRepository;
     private final MemberRepository memberRepository;
     private final TitleRepository titleRepository;
 
@@ -44,12 +46,22 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public CommentsResponse getPageableCommentsByTitleId(final Long titleId, final Pageable pageable) {
+    public CommentsResponse getPageableCommentsByTitleId(final Long memberId, final Long titleId, final Pageable pageable) {
         if(!titleRepository.existsById(titleId)) {
             throw new InvalidException(NOT_FOUND_TITLE_ID);
         }
 
         final Page<Comment> comments = commentRepository.findByTitleId(titleId, pageable);
+
+        if (memberId != null) {
+            for (Comment comment : comments) {
+                comment.updateCommentPermissions(
+                        comment.isOwner(memberId),
+                        commentLikeRepository.existsByMemberIdAndComment(memberId, comment)
+                );
+            }
+        }
+
         return CommentsResponse.ofComments(comments);
     }
 
