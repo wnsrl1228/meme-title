@@ -98,6 +98,7 @@ class TitleControllerTest {
                 .title("제목")
                 .memeId(1L)
                 .member(memberResponse)
+                .likeCount(0)
                 .build();
 
         List<TitleElement> titles = new ArrayList<>();
@@ -132,9 +133,12 @@ class TitleControllerTest {
                 .title("제목")
                 .memeId(1L)
                 .member(memberResponse)
+                .isOwner(true)
+                .isLiked(false)
+                .likeCount(0)
                 .build();
 
-        given(titleService.getTitleById(any())).willReturn(titleDetailResponse);
+        given(titleService.getTitleById(any(), any())).willReturn(titleDetailResponse);
 
         // when, then
         mockMvc.perform(MockMvcRequestBuilders.get("/titles/{titleId}", titleId)

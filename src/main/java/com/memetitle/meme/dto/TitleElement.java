@@ -15,6 +15,7 @@ public class TitleElement {
     private Long memeId;
     private String title;
     private MemberResponse member;
+    private int likeCount;
     private LocalDateTime createdAt;
 
     public static TitleElement of(Title title) {
@@ -23,6 +24,7 @@ public class TitleElement {
                 .memeId(title.getMemeId())
                 .title(title.getTitle())
                 .member(MemberResponse.of(title.getMember()))
+                .likeCount(title.getLikeCount())
                 .createdAt(title.getCreatedAt())
                 .build();
     }

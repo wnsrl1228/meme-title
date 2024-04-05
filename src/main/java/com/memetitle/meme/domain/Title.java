@@ -31,6 +31,9 @@ public class Title {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @Column(nullable = false)
+    private int likeCount;
+
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;
@@ -41,12 +44,19 @@ public class Title {
         this.title = title;
     }
 
-    public boolean isOwner(Long memberId) {
+    public Boolean isNotOwner(Long memberId) {
+        return this.member.getId() != memberId;
+    }
+
+    public Boolean isOwner(Long memberId) {
         return this.member.getId() == memberId;
     }
 
-    public boolean isNotOwner(Long memberId) {
-        return this.member.getId() != memberId;
+    public void increaseLike() {
+        this.likeCount++;
+    }
+    public void decreaseLike() {
+        this.likeCount--;
     }
 
 }

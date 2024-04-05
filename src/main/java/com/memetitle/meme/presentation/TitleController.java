@@ -44,9 +44,10 @@ public class TitleController {
 
     @GetMapping("/titles/{titleId}")
     public ResponseEntity<TitleDetailResponse> getTitleDetail(
-            @PathVariable final Long titleId
+            @PathVariable final Long titleId,
+            @Login LoginMember loginMember
     ) {
-        return ResponseEntity.ok(titleService.getTitleById(titleId));
+        return ResponseEntity.ok(titleService.getTitleById(loginMember.getMemberId(), titleId));
     }
 
     @DeleteMapping("/titles/{titleId}")

@@ -15,15 +15,21 @@ public class TitleDetailResponse {
     private Long memeId;
     private String title;
     private MemberResponse member;
+    private int likeCount;
     private LocalDateTime createdAt;
+    private Boolean isOwner;
+    private Boolean isLiked;
 
-    public static TitleDetailResponse of(Title title) {
+    public static TitleDetailResponse of(Title title, Boolean isOwner, Boolean isLiked) {
         return TitleDetailResponse.builder()
                 .id(title.getId())
                 .memeId(title.getMemeId())
                 .title(title.getTitle())
                 .member(MemberResponse.of(title.getMember()))
+                .likeCount(title.getLikeCount())
                 .createdAt(title.getCreatedAt())
+                .isOwner(isOwner)
+                .isLiked(isLiked)
                 .build();
 
     }

@@ -12,10 +12,14 @@ public enum ErrorCode {
     NOT_FOUND_MEME_ID(2001, "해당 밈을 찾을 수 없습니다."),
     NOT_FOUND_TITLE_ID(2002, "해당 제목을 찾을 수 없습니다."),
     NOT_FOUND_COMMENT_ID(2003, "해당 댓글을 찾을 수 없습니다."),
+    NOT_FOUND_TITLE_LIKE(2004, "해당 제목에 좋아요가 없습니다."),
     TITLE_ACCESS_DENIED(2012, "해당 제목에 대한 권한이 없습니다."),
     COMMENT_ACCESS_DENIED(2013, "해당 댓글에 대한 권한이 없습니다."),
 
     DUPLICATE_NICKNAME(3000, "이미 존재하는 닉네임입니다."),
+    DUPLICATE_TITLE_LIKE(3002, "이미 좋아요한 제목입니다."),
+    SELF_TITLE_LIKE_DISALLOWED(4002, "본인 제목에는 좋아요를 할 수 없습니다."),
+    SELF_COMMENT_LIKE_DISALLOWED(4003, "본인 댓글에는 좋아요를 할 수 없습니다."),
 
     INVALID_AUTHORIZATION_CODE(4001, "유효하지 않은 인가 코드입니다."),
     INVALID_TOKEN(4002, "유효하지 않은 토큰입니다."),

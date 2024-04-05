@@ -127,7 +127,7 @@ class TitleServiceTest {
     @DisplayName("밈 제목 상세 정보 불러오기를 성공한다.")
     void getTitleDetail_success() {
         // when
-        TitleDetailResponse titleDetailResponse = titleService.getTitleById(initTitle.getId());
+        TitleDetailResponse titleDetailResponse = titleService.getTitleById(null, initTitle.getId());
 
         // then
         assertThat(titleDetailResponse.getId()).isEqualTo(initTitle.getId());
