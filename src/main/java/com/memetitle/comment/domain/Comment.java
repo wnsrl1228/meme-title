@@ -43,11 +43,6 @@ public class Comment {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    @Transient
-    private Boolean isOwner = false;
-
-    @Transient
-    private Boolean isLiked = false;
     public Comment(String content, Member member, Title title) {
         this.content = content;
         this.member = member;
@@ -71,10 +66,5 @@ public class Comment {
     }
     public void decreaseLike() {
         this.likeCount--;
-    }
-
-    public void updateCommentPermissions(Boolean isOwner, Boolean isLiked){
-        this.isOwner = isOwner;
-        this.isLiked = isLiked;
     }
 }

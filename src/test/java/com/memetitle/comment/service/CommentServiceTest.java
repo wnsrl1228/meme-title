@@ -88,8 +88,8 @@ class CommentServiceTest {
     }
 
     @Test
-    @DisplayName("해당 제목의 댓글 페이징 목록 불러오기를 성공한다.")
-    void getCommentsByTitleId_success() throws InterruptedException {
+    @DisplayName("게스트가 해당 제목의 댓글 페이징 목록 불러오기를 성공한다.")
+    void getCommentsByTitleId_success_by_guest() throws InterruptedException {
         // given
         for(int id=2;id<=4;id++) {
             Thread.sleep(1);
@@ -107,8 +107,33 @@ class CommentServiceTest {
         assertThat(commentsResponse.getTotalPages()).isEqualTo(2);
         assertThat(commentsResponse.getTotalElement()).isEqualTo(4);
         assertThat(comments.get(0).getId()).isEqualTo(4);
+        assertThat(comments.get(0).getIsLiked()).isEqualTo(false);
+        assertThat(comments.get(0).getIsOwner()).isEqualTo(false);
     }
 
+    @Test
+    @DisplayName("멤버가 해당 제목의 댓글 페이징 목록 불러오기를 성공한다.")
+    void getCommentsByTitleId_success_by_member() throws InterruptedException {
+        // given
+        for(int id=2;id<=4;id++) {
+            Thread.sleep(1);
+            commentRepository.save(new Comment(SAMPLE_COMMENT, initMember, initTitle));
+        }
+
+        // when
+        CommentsResponse commentsResponse = commentService.getPageableCommentsByTitleId(initMember.getId(), initTitle.getId(), PageRequest.of(0, 3, DESC, "createdAt"));
+        List<CommentElement> comments = commentsResponse.getComments();
+
+        // then
+        assertThat(comments.size()).isEqualTo(3);
+        assertThat(commentsResponse.getIsEmpty()).isEqualTo(false);
+        assertThat(commentsResponse.getPage()).isEqualTo(0);
+        assertThat(commentsResponse.getTotalPages()).isEqualTo(2);
+        assertThat(commentsResponse.getTotalElement()).isEqualTo(4);
+        assertThat(comments.get(0).getId()).isEqualTo(4);
+        assertThat(comments.get(0).getIsLiked()).isEqualTo(false);
+        assertThat(comments.get(0).getIsOwner()).isEqualTo(true);
+    }
     @Test
     @DisplayName("댓글 수정을 성공한다.")
     void updateComment_success() {

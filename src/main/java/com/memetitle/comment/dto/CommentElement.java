@@ -28,8 +28,27 @@ public class CommentElement {
                 .member(MemberResponse.of(comment.getMember()))
                 .likeCount(comment.getLikeCount())
                 .createdAt(comment.getCreatedAt())
-                .isOwner(comment.getIsOwner())
-                .isLiked(comment.getIsLiked())
+                .isOwner(null)
+                .isLiked(null)
+                .build();
+    }
+
+    public static CommentElement of(CommentDto commentDto) {
+        MemberResponse memberResponse = MemberResponse.builder()
+                .id(commentDto.getMemberId())
+                .nickname(commentDto.getNickname())
+                .imgUrl(commentDto.getImgUrl())
+                .build();
+
+        return CommentElement.builder()
+                .id(commentDto.getId())
+                .titleId(commentDto.getTitleId())
+                .content(commentDto.getContent())
+                .member(memberResponse)
+                .likeCount(commentDto.getLikeCount())
+                .createdAt(commentDto.getCreatedAt())
+                .isOwner(commentDto.getIsOwner())
+                .isLiked(commentDto.getIsLiked())
                 .build();
 
     }

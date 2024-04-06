@@ -1,6 +1,7 @@
 package com.memetitle.comment.dto.response;
 
 import com.memetitle.comment.domain.Comment;
+import com.memetitle.comment.dto.CommentDto;
 import com.memetitle.comment.dto.CommentElement;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,6 +20,20 @@ public class CommentsResponse {
     private Boolean isEmpty;
 
     public static CommentsResponse ofComments(Page<Comment> comments) {
+        final List<CommentElement> commentElement = comments.stream()
+                .map(CommentElement::of)
+                .collect(Collectors.toList());
+
+        return CommentsResponse.builder()
+                .comments(commentElement)
+                .page(comments.getNumber())
+                .totalPages(comments.getTotalPages())
+                .totalElement(comments.getTotalElements())
+                .isEmpty(comments.isEmpty())
+                .build();
+    }
+
+    public static CommentsResponse ofCommentDtos(Page<CommentDto> comments) {
         final List<CommentElement> commentElement = comments.stream()
                 .map(CommentElement::of)
                 .collect(Collectors.toList());

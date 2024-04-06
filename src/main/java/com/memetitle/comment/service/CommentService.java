@@ -1,6 +1,7 @@
 package com.memetitle.comment.service;
 
 import com.memetitle.comment.domain.Comment;
+import com.memetitle.comment.dto.CommentDto;
 import com.memetitle.comment.dto.request.CommentCreateRequest;
 import com.memetitle.comment.dto.request.CommentModifyRequest;
 import com.memetitle.comment.dto.response.CommentsResponse;
@@ -16,8 +17,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 import static com.memetitle.global.exception.ErrorCode.*;
 
@@ -51,18 +50,15 @@ public class CommentService {
             throw new InvalidException(NOT_FOUND_TITLE_ID);
         }
 
-        final Page<Comment> comments = commentRepository.findByTitleId(titleId, pageable);
+        final Page<CommentDto> commentsDto;
+        if (memberId == null) {
+            commentsDto = commentRepository.findByTitleId(titleId, pageable);
+        } else {
+            commentsDto = commentRepository.findByTitleId(memberId, titleId, pageable);
 
-        if (memberId != null) {
-            for (Comment comment : comments) {
-                comment.updateCommentPermissions(
-                        comment.isOwner(memberId),
-                        commentLikeRepository.existsByMemberIdAndComment(memberId, comment)
-                );
-            }
         }
 
-        return CommentsResponse.ofComments(comments);
+        return CommentsResponse.ofCommentDtos(commentsDto);
     }
 
     public void updateComment(final Long memberId, final Long commentId, final CommentModifyRequest commentModifyRequest) {
