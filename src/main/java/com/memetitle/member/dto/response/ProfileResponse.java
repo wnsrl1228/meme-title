@@ -8,6 +8,7 @@ import lombok.Getter;
 @Builder
 public class ProfileResponse {
 
+    private Long memberId;
     private String email;
     private String nickname;
     private String imgUrl;
@@ -15,6 +16,7 @@ public class ProfileResponse {
 
     public static ProfileResponse of(Member member) {
         return ProfileResponse.builder()
+                .memberId(member.getId())
                 .email(member.getEmail())
                 .nickname(member.getNickname())
                 .score(member.getScore())

@@ -58,4 +58,8 @@ public class Member {
     public void updateImgUrl(String imgUrl) {
         this.imgUrl = imgUrl;
     }
+
+    public void updateScore(int score) {
+        this.score = score;
+    }
 }

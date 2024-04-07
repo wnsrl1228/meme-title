@@ -5,10 +5,12 @@ import com.memetitle.auth.infrastructure.JwtProvider;
 import com.memetitle.comment.dto.CommentElement;
 import com.memetitle.comment.dto.response.CommentsResponse;
 import com.memetitle.global.config.WebConfig;
+import com.memetitle.member.dto.RankingElement;
 import com.memetitle.member.dto.request.ProfileModifyRequest;
 import com.memetitle.member.dto.response.MemberResponse;
 import com.memetitle.member.dto.response.OtherProfileResponse;
 import com.memetitle.member.dto.response.ProfileResponse;
+import com.memetitle.member.dto.response.RankingResponse;
 import com.memetitle.member.service.MemberService;
 import com.memetitle.meme.dto.TitleElement;
 import com.memetitle.meme.dto.response.TitlesResponse;
@@ -187,5 +189,42 @@ class MemberControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(commentsResponse)));
+    }
+
+    @Test
+    @DisplayName("랭킹 목록 조회에 성공한다.")
+    void getMembersRanking_success() throws Exception {
+        // given
+        Long titleId = 1L;
+        MemberResponse memberResponse = MemberResponse.builder()
+                .id(1L)
+                .nickname("닉네임")
+                .imgUrl("imgUrl").build();
+
+        RankingElement rankingElement = RankingElement.builder()
+                .rank(1)
+                .member(memberResponse)
+                .score(10)
+                .build();
+
+        List<RankingElement> rankingElements = new ArrayList<>();
+        rankingElements.add(rankingElement);
+
+        RankingResponse rankingResponse = RankingResponse.builder()
+                .ranks(rankingElements)
+                .totalPages(1)
+                .page(1)
+                .isEmpty(false)
+                .totalElement(1L)
+                .build();
+
+        given(memberService.getPageableMembersRanking(any())).willReturn(rankingResponse);
+
+        // when, then
+        mockMvc.perform(MockMvcRequestBuilders.get("/members/ranking")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(rankingResponse)));
     }
 }

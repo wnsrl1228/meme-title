@@ -6,9 +6,11 @@ import com.memetitle.comment.repository.CommentRepository;
 import com.memetitle.global.exception.ErrorCode;
 import com.memetitle.global.exception.InvalidException;
 import com.memetitle.member.domain.Member;
+import com.memetitle.member.dto.RankDto;
 import com.memetitle.member.dto.request.ProfileModifyRequest;
 import com.memetitle.member.dto.response.OtherProfileResponse;
 import com.memetitle.member.dto.response.ProfileResponse;
+import com.memetitle.member.dto.response.RankingResponse;
 import com.memetitle.member.repository.MemberRepository;
 import com.memetitle.meme.domain.Title;
 import com.memetitle.meme.dto.response.TitlesResponse;
@@ -86,10 +88,15 @@ public class MemberService {
         return CommentsResponse.ofComments(comments);
     }
 
+    @Transactional(readOnly = true)
+    public RankingResponse getPageableMembersRanking(Pageable pageable) {
+        Page<RankDto> rankDtos = memberRepository.findMembersRanking(pageable);
+        return RankingResponse.ofRankDto(rankDtos);
+    }
+
     private void validateNicknameUniqueness(final String newNickname) {
         if (memberRepository.existsByNickname(newNickname)) {
             throw new InvalidException(DUPLICATE_NICKNAME);
         }
     }
-
 }

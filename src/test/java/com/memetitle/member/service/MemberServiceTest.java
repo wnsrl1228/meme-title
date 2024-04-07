@@ -8,9 +8,11 @@ import com.memetitle.comment.service.CommentService;
 import com.memetitle.global.exception.ErrorCode;
 import com.memetitle.global.exception.InvalidException;
 import com.memetitle.member.domain.Member;
+import com.memetitle.member.dto.RankingElement;
 import com.memetitle.member.dto.request.ProfileModifyRequest;
 import com.memetitle.member.dto.response.OtherProfileResponse;
 import com.memetitle.member.dto.response.ProfileResponse;
+import com.memetitle.member.dto.response.RankingResponse;
 import com.memetitle.member.repository.MemberRepository;
 import com.memetitle.meme.domain.Meme;
 import com.memetitle.meme.domain.Title;
@@ -149,5 +151,27 @@ class MemberServiceTest {
         assertThat(commentElement.getContent()).isEqualTo(initComment.getContent());
         assertThat(commentElement.getTitleId()).isEqualTo(initComment.getTitle().getId());
         assertThat(commentElement.getMember().getId()).isEqualTo(initComment.getId());
+    }
+
+    @Test
+    @DisplayName("유저 랭킹 페이징 목록 불러오기를 성공한다.")
+    void getPageableMembersRanking_success() {
+        // give
+        Member member1 = memberRepository.save(new Member("SAMPLE_SNSTOKENID_1", "SAMPLE_EMAIL_1", "SAMPLE_NICKNAME_1"));
+        Member member2 = memberRepository.save(new Member("SAMPLE_SNSTOKENID_2", "SAMPLE_EMAIL_2", "SAMPLE_NICKNAME_2"));
+        Member member3 = memberRepository.save(new Member("SAMPLE_SNSTOKENID_3", "SAMPLE_EMAIL_3", "SAMPLE_NICKNAME_3"));
+        member1.updateScore(10);
+        member2.updateScore(50);
+        member3.updateScore(30);
+
+        // when
+        RankingResponse rankingResponse = memberService.getPageableMembersRanking(PageRequest.of(0, 2, DESC, "score"));
+        RankingElement rankingElement = rankingResponse.getRanks().get(0);
+
+        // then
+        assertThat(rankingResponse.getRanks().size()).isEqualTo(2);
+        assertThat(rankingElement.getRank()).isEqualTo(1);
+        assertThat(rankingElement.getMember().getId()).isEqualTo(member2.getId());
+        assertThat(rankingElement.getScore()).isEqualTo(50);
     }
 }

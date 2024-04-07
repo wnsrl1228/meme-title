@@ -6,6 +6,7 @@ import com.memetitle.comment.dto.response.CommentsResponse;
 import com.memetitle.member.dto.request.ProfileModifyRequest;
 import com.memetitle.member.dto.response.OtherProfileResponse;
 import com.memetitle.member.dto.response.ProfileResponse;
+import com.memetitle.member.dto.response.RankingResponse;
 import com.memetitle.member.service.MemberService;
 import com.memetitle.meme.dto.response.TitlesResponse;
 import lombok.RequiredArgsConstructor;
@@ -61,5 +62,12 @@ public class MemberController {
             @PageableDefault(sort = "createdAt", direction = DESC) final Pageable pageable
     ) {
         return ResponseEntity.ok().body(memberService.getPageableCommentsByMemberId(loginMember.getMemberId(), pageable));
+    }
+
+    @GetMapping("/members/ranking")
+    public ResponseEntity<RankingResponse> getMembersRanking(
+            @PageableDefault(sort = "score", direction = DESC) final Pageable pageable
+    ) {
+        return ResponseEntity.ok().body(memberService.getPageableMembersRanking(pageable));
     }
 }
