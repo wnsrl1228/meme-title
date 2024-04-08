@@ -8,6 +8,8 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import static javax.persistence.EnumType.STRING;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -23,6 +25,9 @@ public class Meme {
     @Column(nullable = false)
     private String imgUrl;
 
+    @Enumerated(value = STRING)
+    private MemeStatus status;
+
     @Column(nullable = false)
     private LocalDateTime startDate;
 
@@ -34,5 +39,10 @@ public class Meme {
         this.imgUrl = imgUrl;
         this.startDate = startDate;
         this.endDate = endDate;
+        status = MemeStatus.IN_PROGRESS;
+    }
+
+    public void updateStatusToEnded() {
+        this.status = MemeStatus.ENDED;
     }
 }

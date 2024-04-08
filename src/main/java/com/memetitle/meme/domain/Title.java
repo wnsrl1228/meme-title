@@ -56,7 +56,9 @@ public class Title {
         this.likeCount++;
     }
     public void decreaseLike() {
-        this.likeCount--;
+        if (likeCount != 0) {
+            this.likeCount--;
+        }
     }
 
 }

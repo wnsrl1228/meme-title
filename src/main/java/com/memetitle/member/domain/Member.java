@@ -62,4 +62,8 @@ public class Member {
     public void updateScore(int score) {
         this.score = score;
     }
+
+    public void plusScore(int score) {
+        this.score += score;
+    }
 }
