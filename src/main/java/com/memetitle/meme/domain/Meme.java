@@ -45,4 +45,7 @@ public class Meme {
     public void updateStatusToEnded() {
         this.status = MemeStatus.ENDED;
     }
+    public Boolean isInProgress() {
+        return this.status == MemeStatus.IN_PROGRESS;
+    }
 }

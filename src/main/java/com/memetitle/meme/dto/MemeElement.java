@@ -1,6 +1,7 @@
 package com.memetitle.meme.dto;
 
 import com.memetitle.meme.domain.Meme;
+import com.memetitle.meme.domain.MemeStatus;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -13,6 +14,7 @@ public class MemeElement {
     private Long id;
     private String imgOriginalName;
     private String imgUrl;
+    private Boolean isInProgress;
     private LocalDate startDate;
     private LocalDate endDate;
 
@@ -22,6 +24,7 @@ public class MemeElement {
                 .id(meme.getId())
                 .imgOriginalName(meme.getImgOriginalName())
                 .imgUrl(meme.getImgUrl())
+                .isInProgress(meme.isInProgress())
                 .startDate(meme.getStartDate().toLocalDate())
                 .endDate(meme.getEndDate().toLocalDate())
                 .build();

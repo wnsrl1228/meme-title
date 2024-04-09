@@ -74,6 +74,7 @@ class MemeControllerTest {
                 .id(1L)
                 .imgOriginalName("name")
                 .imgUrl("/img")
+                .isInProgress(true)
                 .startDate(LocalDate.now())
                 .endDate(LocalDate.now().plusDays(7))
                 .build();

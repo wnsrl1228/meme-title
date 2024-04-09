@@ -18,8 +18,10 @@ import com.memetitle.meme.domain.Meme;
 import com.memetitle.meme.domain.Title;
 import com.memetitle.meme.dto.TitleElement;
 import com.memetitle.meme.dto.response.TitlesResponse;
+import com.memetitle.meme.dto.response.TopTitlesResponse;
 import com.memetitle.meme.repository.MemeRepository;
 import com.memetitle.meme.repository.TitleRepository;
+import com.memetitle.meme.service.TopTitleService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -61,6 +64,8 @@ class MemberServiceTest {
     private MemberRepository memberRepository;
     @Autowired
     private TitleRepository titleRepository;
+    @Autowired
+    private TopTitleService topTitleService;
 
     private Member initMember;
     private Meme initMeme;
@@ -205,7 +210,16 @@ class MemberServiceTest {
         title6.increaseLike();title6.increaseLike();title6.increaseLike();title6.increaseLike();title6.increaseLike();title6.increaseLike();
         title7.increaseLike();title7.increaseLike();title7.increaseLike();title7.increaseLike();title7.increaseLike();title7.increaseLike();title7.increaseLike();
 
+        // when
         memberService.updateScoreByTitleLikeCount();
+
+        // then
+        TopTitlesResponse topTitlesResponse = topTitleService.getTopTitlesByMemeId(initMeme.getId());
+        List<TitleElement> titles = topTitlesResponse.getTitles();
+
+        assertThat(titles.get(0).getId()).isEqualTo(title7.getId());
+        assertThat(titles.get(1).getId()).isEqualTo(title6.getId());
+        assertThat(titles.get(2).getId()).isEqualTo(title5.getId());
 
         assertThat(member1.getScore()).isEqualTo(0);
         assertThat(member2.getScore()).isEqualTo(20);

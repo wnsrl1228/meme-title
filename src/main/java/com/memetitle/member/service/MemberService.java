@@ -13,9 +13,11 @@ import com.memetitle.member.dto.response.RankingResponse;
 import com.memetitle.member.repository.MemberRepository;
 import com.memetitle.meme.domain.Meme;
 import com.memetitle.meme.domain.Title;
+import com.memetitle.meme.domain.TopTitle;
 import com.memetitle.meme.dto.response.TitlesResponse;
 import com.memetitle.meme.repository.MemeRepository;
 import com.memetitle.meme.repository.TitleRepository;
+import com.memetitle.meme.repository.TopTitleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -41,6 +43,7 @@ public class MemberService {
     private final TitleRepository titleRepository;
     private final CommentRepository commentRepository;
     private final MemeRepository memeRepository;
+    private final TopTitleRepository topTitleRepository;
 
     @Transactional(readOnly = true)
     public ProfileResponse getProfile(final Long memberId) {
@@ -137,13 +140,25 @@ public class MemberService {
                     title.getMember().plusScore(point);
                     continue;
                 }
-
                 // 5등까지 모두 점수를 준 경우
                 if (point == 20) break;
-
                 point -= 20;
                 title.getMember().plusScore(point);
                 beforeLikeCount = title.getLikeCount();
+            }
+
+            // 상위 3개의 제목은 TopTitle에 저장
+            int rank = 1;
+            beforeLikeCount = titles.get(0).getLikeCount();
+            for (int i = 0; i < Math.min(3, titles.size()); i++) {
+
+                Title title = titles.get(i);
+
+                if (beforeLikeCount == title.getLikeCount()) {
+                    topTitleRepository.save(TopTitle.of(meme.getId(), title, rank));
+                    continue;
+                }
+                topTitleRepository.save(TopTitle.of(meme.getId(), title, ++rank));
             }
         }
     }

@@ -4,7 +4,6 @@ import com.memetitle.global.exception.InvalidException;
 import com.memetitle.member.domain.Member;
 import com.memetitle.member.repository.MemberRepository;
 import com.memetitle.meme.domain.Title;
-import com.memetitle.meme.domain.TitleLike;
 import com.memetitle.meme.dto.request.TitleCreateRequest;
 import com.memetitle.meme.dto.response.TitleDetailResponse;
 import com.memetitle.meme.dto.response.TitlesResponse;
@@ -16,8 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 import static com.memetitle.global.exception.ErrorCode.*;
 
@@ -48,7 +45,6 @@ public class TitleService {
                 member,
                 titleCreateRequest.getTitle()
         );
-
         return titleRepository.save(title).getId();
     }
 

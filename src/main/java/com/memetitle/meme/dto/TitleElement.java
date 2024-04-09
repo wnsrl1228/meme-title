@@ -2,6 +2,7 @@ package com.memetitle.meme.dto;
 
 import com.memetitle.member.dto.response.MemberResponse;
 import com.memetitle.meme.domain.Title;
+import com.memetitle.meme.domain.TopTitle;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -26,6 +27,17 @@ public class TitleElement {
                 .member(MemberResponse.of(title.getMember()))
                 .likeCount(title.getLikeCount())
                 .createdAt(title.getCreatedAt())
+                .build();
+    }
+
+    public static TitleElement of(TopTitle topTitle) {
+        return TitleElement.builder()
+                .id(topTitle.getTitleId())
+                .memeId(topTitle.getMemeId())
+                .title(topTitle.getTitle())
+                .member(MemberResponse.of(topTitle.getMember()))
+                .likeCount(topTitle.getPeriodLikeCount())
+                .createdAt(topTitle.getCreatedAt())
                 .build();
     }
 }
