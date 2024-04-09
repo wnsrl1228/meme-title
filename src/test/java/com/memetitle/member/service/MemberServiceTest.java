@@ -4,7 +4,6 @@ import com.memetitle.comment.domain.Comment;
 import com.memetitle.comment.dto.CommentElement;
 import com.memetitle.comment.dto.response.CommentsResponse;
 import com.memetitle.comment.repository.CommentRepository;
-import com.memetitle.comment.service.CommentService;
 import com.memetitle.global.exception.ErrorCode;
 import com.memetitle.global.exception.InvalidException;
 import com.memetitle.member.domain.Member;
@@ -18,7 +17,6 @@ import com.memetitle.meme.domain.Meme;
 import com.memetitle.meme.domain.Title;
 import com.memetitle.meme.dto.TitleElement;
 import com.memetitle.meme.dto.response.TitlesResponse;
-import com.memetitle.meme.dto.response.TopTitlesResponse;
 import com.memetitle.meme.repository.MemeRepository;
 import com.memetitle.meme.repository.TitleRepository;
 import com.memetitle.meme.service.TopTitleService;
@@ -28,13 +26,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.parameters.P;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -64,8 +59,6 @@ class MemberServiceTest {
     private MemberRepository memberRepository;
     @Autowired
     private TitleRepository titleRepository;
-    @Autowired
-    private TopTitleService topTitleService;
 
     private Member initMember;
     private Meme initMeme;
@@ -180,53 +173,4 @@ class MemberServiceTest {
         assertThat(rankingElement.getScore()).isEqualTo(50);
     }
 
-    /**
-     * 상황 : 좋아요 수가 많은 1~5등까지 점수 부여
-     *       좋아요 수가 동일할 경우 동일 순위, 동일 점수 부여
-     */
-    @Test
-    @DisplayName("meme의 제목 좋아요 수를 기준으로 유저 점수 업데이트를 성공한다.")
-    void updateScoreByTitleLikeCount() {
-        // give
-        Member member1 = memberRepository.save(new Member("SAMPLE_SNSTOKENID_1", "SAMPLE_EMAIL_1", "SAMPLE_NICKNAME_1"));
-        Member member2 = memberRepository.save(new Member("SAMPLE_SNSTOKENID_2", "SAMPLE_EMAIL_2", "SAMPLE_NICKNAME_2"));
-        Member member3 = memberRepository.save(new Member("SAMPLE_SNSTOKENID_3", "SAMPLE_EMAIL_3", "SAMPLE_NICKNAME_3"));
-        Member member4 = memberRepository.save(new Member("SAMPLE_SNSTOKENID_4", "SAMPLE_EMAIL_4", "SAMPLE_NICKNAME_4"));
-        Member member5 = memberRepository.save(new Member("SAMPLE_SNSTOKENID_5", "SAMPLE_EMAIL_5", "SAMPLE_NICKNAME_5"));
-        Member member6 = memberRepository.save(new Member("SAMPLE_SNSTOKENID_6", "SAMPLE_EMAIL_6", "SAMPLE_NICKNAME_6"));
-        Member member7 = memberRepository.save(new Member("SAMPLE_SNSTOKENID_7", "SAMPLE_EMAIL_7", "SAMPLE_NICKNAME_7"));
-
-        Title title2 = titleRepository.save(new Title(initMeme.getId(), member2, SAMPLE_TITLE));
-        Title title3 = titleRepository.save(new Title(initMeme.getId(), member3, SAMPLE_TITLE));
-        Title title4 = titleRepository.save(new Title(initMeme.getId(), member4, SAMPLE_TITLE));
-        Title title5 = titleRepository.save(new Title(initMeme.getId(), member5, SAMPLE_TITLE));
-        Title title6 = titleRepository.save(new Title(initMeme.getId(), member6, SAMPLE_TITLE));
-        Title title7 = titleRepository.save(new Title(initMeme.getId(), member7, SAMPLE_TITLE));
-
-        title2.increaseLike();title2.increaseLike();
-        title3.increaseLike();title3.increaseLike();
-        title4.increaseLike();title4.increaseLike();title4.increaseLike();title4.increaseLike();
-        title5.increaseLike();title5.increaseLike();title5.increaseLike();title5.increaseLike();title5.increaseLike();
-        title6.increaseLike();title6.increaseLike();title6.increaseLike();title6.increaseLike();title6.increaseLike();title6.increaseLike();
-        title7.increaseLike();title7.increaseLike();title7.increaseLike();title7.increaseLike();title7.increaseLike();title7.increaseLike();title7.increaseLike();
-
-        // when
-        memberService.updateScoreByTitleLikeCount();
-
-        // then
-        TopTitlesResponse topTitlesResponse = topTitleService.getTopTitlesByMemeId(initMeme.getId());
-        List<TitleElement> titles = topTitlesResponse.getTitles();
-
-        assertThat(titles.get(0).getId()).isEqualTo(title7.getId());
-        assertThat(titles.get(1).getId()).isEqualTo(title6.getId());
-        assertThat(titles.get(2).getId()).isEqualTo(title5.getId());
-
-        assertThat(member1.getScore()).isEqualTo(0);
-        assertThat(member2.getScore()).isEqualTo(20);
-        assertThat(member3.getScore()).isEqualTo(20);
-        assertThat(member4.getScore()).isEqualTo(40);
-        assertThat(member5.getScore()).isEqualTo(60);
-        assertThat(member6.getScore()).isEqualTo(80);
-        assertThat(member7.getScore()).isEqualTo(100);
-    }
 }
