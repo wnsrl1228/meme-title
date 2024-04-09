@@ -60,7 +60,7 @@ class LoginServiceTest {
         assertThat(1L).isEqualTo(member.getId());
         assertThat(SAMPLE_SNSTOKENID).isEqualTo(member.getSnsTokenId());
         assertThat(SAMPLE_EMAIL).isEqualTo(member.getEmail());
-        assertThat(SAMPLE_NICKNAME).isEqualTo(member.getNickname());
+        assertThat(member.getNickname().startsWith(SAMPLE_NICKNAME)).isEqualTo(true);
         assertThat(refreshToken.getMemberId()).isEqualTo(member.getId());
         assertThat(refreshToken.getToken()).isEqualTo(login.getRefreshToken());
     }

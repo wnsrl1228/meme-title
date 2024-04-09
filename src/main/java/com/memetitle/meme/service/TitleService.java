@@ -37,6 +37,12 @@ public class TitleService {
         if (!memeRepository.existsById(memeId)) {
             throw new InvalidException(NOT_FOUND_MEME_ID);
         }
+
+        long myTitleCount = titleRepository.countByMemeIdAndMember(memeId, member);
+        if (myTitleCount >= 3) {
+            throw new InvalidException(MAX_NUMBER_OF_TITLES_REACHED);
+        }
+
         final Title title = new Title(
                 memeId,
                 member,

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.memetitle.global.exception.ErrorCode.INVALID_TOKEN;
+import static com.memetitle.global.exception.ErrorCode.SERVER_ERROR;
 
 @Service
 @Transactional
@@ -54,11 +55,19 @@ public class LoginService {
     }
 
     private Member save(final MemberInfo memberInfo) {
-        return memberRepository.save(new Member(
-                memberInfo.getSnsTokenId(),
-                memberInfo.getEmail(),
-                memberInfo.getNickname()
-        ));
-    }
 
+        int tryCount = 0;
+        while (tryCount < 5) {
+            memberInfo.generateRandomizedNickname();
+            if (!memberRepository.existsByNickname(memberInfo.getNickname())) {
+                return memberRepository.save(new Member(
+                        memberInfo.getSnsTokenId(),
+                        memberInfo.getEmail(),
+                        memberInfo.getNickname()
+                ));
+            }
+            tryCount++;
+        }
+        throw new AuthException(SERVER_ERROR);
+    }
 }

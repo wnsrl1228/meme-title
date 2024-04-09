@@ -1,5 +1,6 @@
 package com.memetitle.meme.repository;
 
+import com.memetitle.member.domain.Member;
 import com.memetitle.meme.domain.Title;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -19,4 +20,6 @@ public interface TitleRepository extends JpaRepository<Title, Long> {
 
     @EntityGraph(attributePaths = {"member"})
     List<Title> findByMemeIdOrderByLikeCountDesc(Long memeId);
+
+    long countByMemeIdAndMember(Long memeId, Member member);
 }

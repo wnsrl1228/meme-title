@@ -21,4 +21,12 @@ public class MemberInfo  {
         this.nickname = nickname;
     }
 
+    public void generateRandomizedNickname() {
+        this.nickname = this.nickname + "_" + generateRandomNineDigitCode();
+    }
+
+    private String generateRandomNineDigitCode() {
+        final int randomNumber = (int) (Math.random() * 1000000000);
+        return String.format("%09d", randomNumber);
+    }
 }

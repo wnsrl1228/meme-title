@@ -105,6 +105,22 @@ class TitleServiceTest {
     }
 
     @Test
+    @DisplayName("밈 제목 생성 시 이미 3개 이상의 제목을 작성했을 시 예외가 발생한다.")
+    void saveTitle_MAX_NUMBER_OF_TITLES_REACHED() {
+        // given
+        titleRepository.save(new Title(initMeme.getId(), initMember, "안녕!"));
+        titleRepository.save(new Title(initMeme.getId(), initMember, "안녕!"));
+        titleRepository.save(new Title(initMeme.getId(), initMember, "안녕!"));
+
+        TitleCreateRequest titleCreateRequest = new TitleCreateRequest(SAMPLE_TITLE);
+
+        // then & when
+        assertThatThrownBy(() -> titleService.saveTitle(initMember.getId(), initMeme.getId(), titleCreateRequest))
+                .isInstanceOf(InvalidException.class)
+                .hasMessage(ErrorCode.MAX_NUMBER_OF_TITLES_REACHED.getMessage());
+    }
+
+    @Test
     @DisplayName("밈 제목 페이징 목록 불러오기를 성공한다.")
     void getPageableTitlesByMemeId_success() throws InterruptedException {
         // given
