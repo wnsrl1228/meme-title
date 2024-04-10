@@ -70,4 +70,12 @@ public class MemberController {
     ) {
         return ResponseEntity.ok().body(memberService.getPageableMembersRanking(pageable));
     }
+
+    @GetMapping("/member/{memberId}/titles")
+    public ResponseEntity<TitlesResponse> getTitlesForOtherMember(
+            @PathVariable final Long memberId,
+            @PageableDefault(sort = "createdAt", direction = DESC) final Pageable pageable
+    ) {
+        return ResponseEntity.ok().body(memberService.getPageableTitlesByMemberId(memberId, pageable));
+    }
 }

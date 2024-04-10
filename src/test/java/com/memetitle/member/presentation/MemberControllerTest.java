@@ -227,4 +227,39 @@ class MemberControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(rankingResponse)));
     }
+
+    @Test
+    @DisplayName("다른 멤버가 작성한 제목 목록 조회에 성공한다.")
+    void getTitlesForOtherMember_success() throws Exception {
+        // given
+        Long memberId = 1L;
+        MemberResponse memberResponse = MemberResponse.builder()
+                .id(1L)
+                .nickname("닉네임")
+                .imgUrl("imgUrl").build();
+
+        TitleElement titleElement = TitleElement.builder()
+                .title("제목")
+                .memeId(1L)
+                .member(memberResponse)
+                .build();
+
+        List<TitleElement> titles = new ArrayList<>();
+        titles.add(titleElement);
+
+        TitlesResponse titlesResponse = TitlesResponse.builder()
+                .titles(titles)
+                .isLast(true)
+                .isEmpty(false)
+                .build();
+
+        given(memberService.getPageableTitlesByMemberId(any(), any())).willReturn(titlesResponse);
+
+        // when, then
+        mockMvc.perform(MockMvcRequestBuilders.get("/member/{memberId}/titles", memberId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(titlesResponse)));
+    }
 }
