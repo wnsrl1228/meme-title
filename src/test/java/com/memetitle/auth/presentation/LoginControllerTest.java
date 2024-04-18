@@ -8,6 +8,7 @@ import com.memetitle.global.exception.AuthException;
 import com.memetitle.global.exception.ErrorCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -21,6 +22,8 @@ import javax.servlet.http.Cookie;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.doNothing;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(value = {LoginController.class, WebConfig.class, JwtProvider.class})
@@ -30,7 +33,8 @@ public class LoginControllerTest {
     private static final String REFRESH_TOKEN = "refresh_token";
     @MockBean
     private LoginService loginService;
-
+    @MockBean
+    private JwtProvider jwtProvider;
     @Autowired
     private MockMvc mockMvc;
 
@@ -96,5 +100,22 @@ public class LoginControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(ErrorCode.INVALID_TOKEN.getCode()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(ErrorCode.INVALID_TOKEN.getMessage()));
+    }
+
+    @Test
+    @DisplayName("로그아웃에 성공한다.")
+    void logout_success() throws Exception {
+        // given
+        given(jwtProvider.validateToken(any())).willReturn(null);
+        given(jwtProvider.getSubject(any())).willReturn("1");
+        doNothing().when(loginService).logout("refreshToken");
+
+        // when & then
+        mockMvc.perform(MockMvcRequestBuilders.delete("/logout")
+                        .header(AUTHORIZATION, "Bearer access-token")
+                        .cookie(new Cookie("refresh-token", REFRESH_TOKEN))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
     }
 }

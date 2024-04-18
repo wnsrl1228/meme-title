@@ -1,9 +1,12 @@
 package com.memetitle.auth.presentation;
 
+import com.memetitle.auth.Login;
+import com.memetitle.auth.dto.LoginMember;
 import com.memetitle.auth.dto.LoginTokens;
 import com.memetitle.auth.dto.response.TokenResponse;
 import com.memetitle.auth.service.LoginService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,4 +47,14 @@ public class LoginController {
         final String accessToken = loginService.renewAccessToken(refreshToken);
         return ResponseEntity.ok().body(new TokenResponse(accessToken));
     }
+
+    @DeleteMapping("/logout")
+    public ResponseEntity<Void> logout(
+            @Login final LoginMember loginMember,
+            @CookieValue("refresh-token") final String refreshToken
+    ) {
+        loginService.logout(refreshToken);
+        return ResponseEntity.noContent().build();
+    }
+
 }

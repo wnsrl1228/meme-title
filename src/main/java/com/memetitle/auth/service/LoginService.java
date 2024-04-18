@@ -70,4 +70,8 @@ public class LoginService {
         }
         throw new AuthException(SERVER_ERROR);
     }
+
+    public void logout(final String refreshToken) {
+        refreshTokenRepository.deleteByToken(refreshToken);
+    }
 }

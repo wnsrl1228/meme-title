@@ -113,4 +113,20 @@ class LoginServiceTest {
                 .isInstanceOf(AuthException.class)
                 .hasMessage(ErrorCode.INVALID_TOKEN.getMessage());
     }
+
+    @Test
+    @DisplayName("로그아웃에 성공한다.")
+    void logout_success() {
+        // given
+        given(oauthProvider.getMemberInfo("")).willReturn(new MemberInfo(SAMPLE_SNSTOKENID, SAMPLE_EMAIL, SAMPLE_NICKNAME));
+        given(jwtProvider.createLoginTokens("1")).willReturn(new LoginTokens("accessToken", "refreshToken"));
+        LoginTokens login = loginService.login("");
+
+        // when
+        loginService.logout("refreshToken");
+
+        // then
+        assertThat(refreshTokenRepository.existsById(1L)).isEqualTo(false);
+    }
+
 }
