@@ -37,19 +37,19 @@ public class TopTitle {
     private int periodLikeCount;
 
     @Column(nullable = false)
-    private int rank;
+    private int ranking;
 
-    public TopTitle(Long memeId, Long titleId, String title, Member member, LocalDateTime createdAt, int periodLikeCount, int rank) {
+    public TopTitle(Long memeId, Long titleId, String title, Member member, LocalDateTime createdAt, int periodLikeCount, int ranking) {
         this.memeId = memeId;
         this.titleId = titleId;
         this.title = title;
         this.member = member;
         this.createdAt = createdAt;
         this.periodLikeCount = periodLikeCount;
-        this.rank = rank;
+        this.ranking = ranking;
     }
 
-    public static TopTitle of(Long memeId, Title title, int rank) {
+    public static TopTitle of(Long memeId, Title title, int ranking) {
         return new TopTitle(
                 memeId,
                 title.getId(),
@@ -57,7 +57,7 @@ public class TopTitle {
                 title.getMember(),
                 title.getCreatedAt(),
                 title.getLikeCount(),
-                rank
+                ranking
         );
     }
 }

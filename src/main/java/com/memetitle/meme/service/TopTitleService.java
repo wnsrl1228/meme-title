@@ -25,7 +25,7 @@ public class TopTitleService {
         if (!memeRepository.existsById(memeId)) {
             throw new InvalidException(NOT_FOUND_MEME_ID);
         }
-        List<TopTitle> topTitles = topTitleRepository.findByMemeIdOrderByRank(memeId);
+        List<TopTitle> topTitles = topTitleRepository.findByMemeIdOrderByRanking(memeId);
         return TopTitlesResponse.ofTopTitles(topTitles);
     }
 }

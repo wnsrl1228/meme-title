@@ -77,16 +77,16 @@ public class MemberSchedulerService {
     }
 
     private void saveTopTitles(Long memeId, List<Title> titles) {
-        int rank = 1;
+        int ranking = 1;
         int beforeLikeCount = titles.get(0).getLikeCount();
         for (int i = 0; i < Math.min(3, titles.size()); i++) {
             Title title = titles.get(i);
             if (beforeLikeCount == title.getLikeCount()) {
-                topTitleRepository.save(TopTitle.of(memeId, title, rank));
+                topTitleRepository.save(TopTitle.of(memeId, title, ranking));
             } else {
-                rank++;
+                ranking++;
                 beforeLikeCount = title.getLikeCount();
-                topTitleRepository.save(TopTitle.of(memeId, title, rank));
+                topTitleRepository.save(TopTitle.of(memeId, title, ranking));
             }
         }
     }

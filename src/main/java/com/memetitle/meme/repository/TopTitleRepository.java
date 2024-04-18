@@ -9,5 +9,5 @@ import java.util.List;
 public interface TopTitleRepository extends JpaRepository<TopTitle, Long> {
 
     @EntityGraph(attributePaths = {"member"})
-    List<TopTitle> findByMemeIdOrderByRank(Long memeId);
+    List<TopTitle> findByMemeIdOrderByRanking(Long memeId);
 }
