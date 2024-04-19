@@ -11,6 +11,7 @@ public class CommentDto {
 
     private Long id;
     private Long titleId;
+    private Long memeId;
     private String content;
     private Long memberId;
     private String nickname;

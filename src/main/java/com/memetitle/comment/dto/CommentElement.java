@@ -13,6 +13,7 @@ public class CommentElement {
 
     private Long id;
     private Long titleId;
+    private Long memeId;
     private String content;
     private MemberResponse member;
     private int likeCount;
@@ -23,6 +24,7 @@ public class CommentElement {
     public static CommentElement of(Comment comment) {
         return CommentElement.builder()
                 .id(comment.getId())
+                .memeId(comment.getTitle().getMemeId())
                 .titleId(comment.getTitle().getId())
                 .content(comment.getContent())
                 .member(MemberResponse.of(comment.getMember()))
@@ -43,6 +45,7 @@ public class CommentElement {
         return CommentElement.builder()
                 .id(commentDto.getId())
                 .titleId(commentDto.getTitleId())
+                .memeId(commentDto.getMemeId())
                 .content(commentDto.getContent())
                 .member(memberResponse)
                 .likeCount(commentDto.getLikeCount())
