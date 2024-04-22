@@ -4,6 +4,8 @@ import com.memetitle.member.domain.Member;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
@@ -22,6 +24,7 @@ public class TitleLike {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "title_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Title title;
 
     public TitleLike(Member member, Title title) {
