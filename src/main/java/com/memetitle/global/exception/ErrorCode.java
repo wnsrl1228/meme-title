@@ -21,6 +21,7 @@ public enum ErrorCode {
     DUPLICATE_TITLE_LIKE(3002, "이미 좋아요한 제목입니다."),
     DUPLICATE_COMMENT_LIKE(3003, "이미 좋아요한 댓글입니다."),
     MAX_NUMBER_OF_TITLES_REACHED(3012, "하나의 밈에 최대 3개의 제목만 작성할 수 있습니다."),
+    TOP_TITLE_CANNOT_BE_DELETED(3032,"명예 제목은 삭제할 수 없습니다."),
     SELF_TITLE_LIKE_DISALLOWED(4002, "본인 제목에는 좋아요를 할 수 없습니다."),
     SELF_COMMENT_LIKE_DISALLOWED(4003, "본인 댓글에는 좋아요를 할 수 없습니다."),
 

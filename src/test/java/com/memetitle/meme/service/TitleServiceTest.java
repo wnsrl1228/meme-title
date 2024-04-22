@@ -6,12 +6,14 @@ import com.memetitle.member.domain.Member;
 import com.memetitle.member.repository.MemberRepository;
 import com.memetitle.meme.domain.Meme;
 import com.memetitle.meme.domain.Title;
+import com.memetitle.meme.domain.TopTitle;
 import com.memetitle.meme.dto.TitleElement;
 import com.memetitle.meme.dto.request.TitleCreateRequest;
 import com.memetitle.meme.dto.response.TitleDetailResponse;
 import com.memetitle.meme.dto.response.TitlesResponse;
 import com.memetitle.meme.repository.MemeRepository;
 import com.memetitle.meme.repository.TitleRepository;
+import com.memetitle.meme.repository.TopTitleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,15 +41,17 @@ class TitleServiceTest {
     private static final String SAMPLE_NICKNAME = "hello";
     private static final String SAMPLE_TITLE = "제목입니다.";
     private static final Long INVALID_ID = 9999L;
+
     @Autowired
     private TitleService titleService;
-
     @Autowired
     private MemeRepository memeRepository;
     @Autowired
     private MemberRepository memberRepository;
     @Autowired
     private TitleRepository titleRepository;
+    @Autowired
+    private TopTitleRepository topTitleRepository;
 
     private Member initMember;
     private Meme initMeme;
@@ -171,5 +175,18 @@ class TitleServiceTest {
         assertThatThrownBy(() -> titleService.deleteTitle(newMember.getId(), initTitle.getId()))
                  .isInstanceOf(InvalidException.class)
                          .hasMessage(ErrorCode.TITLE_ACCESS_DENIED.getMessage());
+    }
+
+    @Test
+    @DisplayName("Top title을 삭제할 경우 예외가 발생한다.")
+    void deleteTitle_TOP_TITLE_CANNOT_BE_DELETED() {
+        // given
+
+        topTitleRepository.save(TopTitle.of(initMeme.getId(), initTitle, 1));
+
+        // when & then
+        assertThatThrownBy(() -> titleService.deleteTitle(initMember.getId(), initTitle.getId()))
+                .isInstanceOf(InvalidException.class)
+                .hasMessage(ErrorCode.TOP_TITLE_CANNOT_BE_DELETED.getMessage());
     }
 }

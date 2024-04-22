@@ -10,6 +10,7 @@ import com.memetitle.meme.dto.response.TitlesResponse;
 import com.memetitle.meme.repository.MemeRepository;
 import com.memetitle.meme.repository.TitleLikeRepository;
 import com.memetitle.meme.repository.TitleRepository;
+import com.memetitle.meme.repository.TopTitleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -27,6 +28,7 @@ public class TitleService {
     private final MemeRepository memeRepository;
     private final MemberRepository memberRepository;
     private final TitleLikeRepository titleLikeRepository;
+    private final TopTitleRepository topTitleRepository;
 
     public Long saveTitle(final Long memberId, final Long memeId, final TitleCreateRequest titleCreateRequest) {
         final Member member = memberRepository.findById(memberId)
@@ -82,6 +84,10 @@ public class TitleService {
 
         if (title.isNotOwner(memberId)) {
             throw new InvalidException(TITLE_ACCESS_DENIED);
+        }
+
+        if (topTitleRepository.existsByTitleId(titleId)) {
+            throw new InvalidException(TOP_TITLE_CANNOT_BE_DELETED);
         }
 
         titleRepository.deleteById(titleId);

@@ -10,4 +10,6 @@ public interface TopTitleRepository extends JpaRepository<TopTitle, Long> {
 
     @EntityGraph(attributePaths = {"member"})
     List<TopTitle> findByMemeIdOrderByRanking(Long memeId);
+
+    boolean existsByTitleId(Long titleId);
 }
