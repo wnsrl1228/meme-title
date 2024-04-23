@@ -7,8 +7,10 @@ import com.memetitle.global.common.interceptor.PathMatcherInterceptor;
 import com.memetitle.global.common.interceptor.PathMethod;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -19,6 +21,15 @@ import java.util.List;
 public class WebConfig implements WebMvcConfigurer {
 
     private final JwtProvider jwtProvider;
+
+    @Override
+    public void addCorsMappings(final CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("http://localhost:3000")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
+                .allowCredentials(true) // 쿠키,세션 허용 여부
+                .exposedHeaders(HttpHeaders.LOCATION); // 리다이렉션 허용 여부
+    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
