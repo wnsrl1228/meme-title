@@ -49,10 +49,12 @@ public class WebConfig implements WebMvcConfigurer {
         final PathMatcherInterceptor interceptor = new PathMatcherInterceptor(new AuthHandlerInterceptor(jwtProvider));
 
         return interceptor
+                .includePathPattern("/logout", PathMethod.DELETE)
                 .includePathPattern("/memes", PathMethod.POST)
                 .includePathPattern("/memes/{memeId}", PathMethod.POST)
                 .includePathPattern("/member/profile", PathMethod.GET)
                 .includePathPattern("/memes/{memeId}/titles/{titleId}", PathMethod.DELETE)
+                .includePathPattern("/titles/{titleId}", PathMethod.DELETE)
                 .includePathPattern("/titles/{titleId}/comments", PathMethod.POST)
                 .includePathPattern("/comments/{commentId}", PathMethod.PATCH)
                 .includePathPattern("/comments/{commentId}", PathMethod.DELETE)
