@@ -88,6 +88,7 @@ class MemberControllerTest {
                 .nickname("nickname")
                 .imgUrl("imgUrl")
                 .score(10)
+                .introduction("제 소개")
                 .build();
 
         given(memberService.getOtherProfile(any())).willReturn(otherProfileResponse);
@@ -104,7 +105,7 @@ class MemberControllerTest {
     @DisplayName("프로필 정보 수정에 성공한다.")
     void modifyProfile_success() throws Exception {
         // given
-        ProfileModifyRequest profileModifyRequest = new ProfileModifyRequest("newNickname", "newImgUrl");
+        ProfileModifyRequest profileModifyRequest = new ProfileModifyRequest("newNickname", "newImgUrl", "introduction");
         doNothing().when(memberService).updateProfile(any(), any());
 
         // when, then
@@ -261,5 +262,27 @@ class MemberControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(titlesResponse)));
+    }
+
+    @Test
+    @DisplayName("밈 제목 짓기 1등의 정보 조회에 성공한다.")
+    void getTopIntroduction_success() throws Exception {
+        // given
+        Long memberId = 1L;
+        OtherProfileResponse otherProfileResponse = OtherProfileResponse.builder()
+                .nickname("nickname")
+                .imgUrl("imgUrl")
+                .score(10)
+                .introduction("자기소개")
+                .build();
+
+        given(memberService.getOtherProfileByTopTitle()).willReturn(otherProfileResponse);
+
+        // when, then
+        mockMvc.perform(MockMvcRequestBuilders.get("/top/introduction")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(otherProfileResponse)));
     }
 }

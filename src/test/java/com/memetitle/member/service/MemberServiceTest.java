@@ -15,10 +15,12 @@ import com.memetitle.member.dto.response.RankingResponse;
 import com.memetitle.member.repository.MemberRepository;
 import com.memetitle.meme.domain.Meme;
 import com.memetitle.meme.domain.Title;
+import com.memetitle.meme.domain.TopTitle;
 import com.memetitle.meme.dto.TitleElement;
 import com.memetitle.meme.dto.response.TitlesResponse;
 import com.memetitle.meme.repository.MemeRepository;
 import com.memetitle.meme.repository.TitleRepository;
+import com.memetitle.meme.repository.TopTitleRepository;
 import com.memetitle.meme.service.TopTitleService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -30,6 +32,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -59,6 +62,8 @@ class MemberServiceTest {
     private MemberRepository memberRepository;
     @Autowired
     private TitleRepository titleRepository;
+    @Autowired
+    private TopTitleRepository topTitleRepository;
 
     private Member initMember;
     private Meme initMeme;
@@ -98,7 +103,7 @@ class MemberServiceTest {
     @DisplayName("프로필 수정을 성공한다.")
     void updateProfile_success() {
         // given
-        ProfileModifyRequest profileModifyRequest = new ProfileModifyRequest("new nickname", "new imgUrl");
+        ProfileModifyRequest profileModifyRequest = new ProfileModifyRequest("new nickname", "new imgUrl", "introduction");
         
         // when
         memberService.updateProfile(initMember.getId(), profileModifyRequest);
@@ -116,7 +121,7 @@ class MemberServiceTest {
         // given
         String NEW_NICKNAME = "newNickname";
         memberRepository.save(new Member("new-token", "new-email", NEW_NICKNAME));
-        ProfileModifyRequest profileModifyRequest = new ProfileModifyRequest(NEW_NICKNAME, "new imgUrl");
+        ProfileModifyRequest profileModifyRequest = new ProfileModifyRequest(NEW_NICKNAME, "new imgUrl", "introduction");
 
         // when & then
         assertThatThrownBy(() -> memberService.updateProfile(initMember.getId(), profileModifyRequest))
@@ -173,4 +178,36 @@ class MemberServiceTest {
         assertThat(rankingElement.getScore()).isEqualTo(50);
     }
 
+    @Test
+    @DisplayName("밈 제목짓기 1등의 정보 불러오기를 성공한다.")
+    void getOtherProfileByTopTitle_success() {
+
+        // given
+        Meme meme1 = memeRepository.save(new Meme("test.jpg", IMG_URL, LocalDateTime.now(), LocalDateTime.now()));
+        Meme meme2 = memeRepository.save(new Meme("test.jpg", IMG_URL, LocalDateTime.now().plusDays(1), LocalDateTime.now()));
+        meme1.updateStatusToEnded();
+        meme2.updateStatusToEnded();
+
+        Title title = titleRepository.save(new Title(meme2.getId(), initMember, SAMPLE_TITLE));
+        topTitleRepository.save(TopTitle.of(meme2.getId(), title, 1));
+
+        initMember.updateIntroduction("새로운 자기소개");
+
+        // when
+        OtherProfileResponse otherProfileResponse = memberService.getOtherProfileByTopTitle();
+
+        // then
+        assertThat(otherProfileResponse.getIntroduction()).isEqualTo("새로운 자기소개");
+        assertThat(otherProfileResponse.getNickname()).isEqualTo(initMember.getNickname());
+    }
+
+    @Test
+    @DisplayName("밈 제목짓기 1등의 정보가 없을 경우 디폴트 정보 불러오기를 성공한다.")
+    void getOtherProfileByTopTitle_default_success() {
+        // given & when
+        OtherProfileResponse otherProfileResponse = memberService.getOtherProfileByTopTitle();
+
+        // then
+        assertThat(otherProfileResponse.getNickname()).isEqualTo("작성자");
+    }
 }

@@ -11,7 +11,10 @@ import com.memetitle.member.dto.response.OtherProfileResponse;
 import com.memetitle.member.dto.response.ProfileResponse;
 import com.memetitle.member.dto.response.RankingResponse;
 import com.memetitle.member.repository.MemberRepository;
+import com.memetitle.meme.domain.Meme;
+import com.memetitle.meme.domain.MemeStatus;
 import com.memetitle.meme.domain.Title;
+import com.memetitle.meme.domain.TopTitle;
 import com.memetitle.meme.dto.response.TitlesResponse;
 import com.memetitle.meme.repository.MemeRepository;
 import com.memetitle.meme.repository.TitleRepository;
@@ -22,6 +25,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
+import java.util.Optional;
 
 import static com.memetitle.global.exception.ErrorCode.DUPLICATE_NICKNAME;
 import static com.memetitle.global.exception.ErrorCode.NOT_FOUND_MEMBER_ID;
@@ -34,6 +40,8 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final TitleRepository titleRepository;
     private final CommentRepository commentRepository;
+    private final TopTitleRepository topTitleRepository;
+    private final MemeRepository memeRepository;
 
     @Transactional(readOnly = true)
     public ProfileResponse getProfile(final Long memberId) {
@@ -56,14 +64,19 @@ public class MemberService {
                 .orElseThrow(() -> new InvalidException(NOT_FOUND_MEMBER_ID));
 
         final String newNickname = profileModifyRequest.getNickname();
-        if (member.getNickname() != newNickname) {
+        if (!Objects.equals(member.getNickname(), newNickname)) {
             validateNicknameUniqueness(newNickname);
             member.updateNickname(newNickname);
         }
 
         final String newImgUrl = profileModifyRequest.getImgUrl();
-        if (member.getImgUrl() != newImgUrl) {
+        if (!Objects.equals(member.getImgUrl(), newImgUrl)) {
             member.updateImgUrl(newImgUrl);
+        }
+
+        final String newIntroduction = profileModifyRequest.getIntroduction();
+        if (!Objects.equals(member.getIntroduction(), newIntroduction)) {
+            member.updateIntroduction(newIntroduction);
         }
     }
 
@@ -91,6 +104,24 @@ public class MemberService {
     public RankingResponse getPageableMembersRanking(Pageable pageable) {
         Page<RankDto> rankDtos = memberRepository.findMembersRanking(pageable);
         return RankingResponse.ofRankDto(rankDtos);
+    }
+
+    @Transactional(readOnly = true)
+    public OtherProfileResponse getOtherProfileByTopTitle() {
+
+        Optional<Meme> optionalMeme = memeRepository.findFirstByStatusOrderByStartDateDesc(MemeStatus.ENDED);
+
+        if (optionalMeme.isEmpty()) {
+            return OtherProfileResponse.defaultValue();
+        }
+
+        Optional<TopTitle> optionalTopTitle = topTitleRepository.findFirstByMemeIdOrderByRanking(optionalMeme.get().getId());
+
+        if (optionalTopTitle.isEmpty()) {
+            return OtherProfileResponse.defaultValue();
+        }
+
+        return OtherProfileResponse.of(optionalTopTitle.get().getMember());
     }
 
     private void validateNicknameUniqueness(final String newNickname) {

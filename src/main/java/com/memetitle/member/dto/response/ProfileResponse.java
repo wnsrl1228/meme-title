@@ -13,6 +13,7 @@ public class ProfileResponse {
     private String nickname;
     private String imgUrl;
     private int score;
+    private String introduction;
 
     public static ProfileResponse of(Member member) {
         return ProfileResponse.builder()
@@ -21,6 +22,7 @@ public class ProfileResponse {
                 .nickname(member.getNickname())
                 .score(member.getScore())
                 .imgUrl(member.getImgUrl())
+                .introduction(member.getIntroduction())
                 .build();
     }
 }

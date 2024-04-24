@@ -78,4 +78,9 @@ public class MemberController {
     ) {
         return ResponseEntity.ok().body(memberService.getPageableTitlesByMemberId(memberId, pageable));
     }
+
+    @GetMapping("/top/introduction")
+    public ResponseEntity<OtherProfileResponse> getTopIntroduction() {
+        return ResponseEntity.ok(memberService.getOtherProfileByTopTitle());
+    }
 }
