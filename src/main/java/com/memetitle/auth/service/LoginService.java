@@ -13,8 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.memetitle.global.exception.ErrorCode.INVALID_TOKEN;
-import static com.memetitle.global.exception.ErrorCode.SERVER_ERROR;
+import static com.memetitle.global.exception.ErrorCode.*;
 
 @Service
 @Transactional
@@ -46,10 +45,14 @@ public class LoginService {
 
     public String renewAccessToken(final String refreshToken) {
 
-        jwtProvider.validateToken(refreshToken);
+        try {
+            jwtProvider.validateToken(refreshToken);
+        } catch (AuthException e) {
+            throw new AuthException(INVALID_REFRESH_TOKEN);
+        }
 
         final RefreshToken findRefreshToken = refreshTokenRepository.findByToken(refreshToken)
-                .orElseThrow(() -> new AuthException(INVALID_TOKEN));
+                .orElseThrow(() -> new AuthException(INVALID_REFRESH_TOKEN));
 
         return jwtProvider.createAccessToken(findRefreshToken.getMemberId().toString());
     }

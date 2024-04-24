@@ -103,7 +103,7 @@ class LoginServiceTest {
 
     @Test
     @DisplayName("토큰 갱신 시, DB에 존재하지 않는 리프레시 토큰을 사용할 경우 예외가 발생한다.")
-    void renewAccessToken_INVALID_TOKEN() {
+    void renewAccessToken_INVALID_REFRESH_TOKEN() {
 
         // given
         given(jwtProvider.validateToken("")).willReturn(null);
@@ -111,7 +111,7 @@ class LoginServiceTest {
         // when & then
         assertThatThrownBy(() -> loginService.renewAccessToken(""))
                 .isInstanceOf(AuthException.class)
-                .hasMessage(ErrorCode.INVALID_TOKEN.getMessage());
+                .hasMessage(ErrorCode.INVALID_REFRESH_TOKEN.getMessage());
     }
 
     @Test
