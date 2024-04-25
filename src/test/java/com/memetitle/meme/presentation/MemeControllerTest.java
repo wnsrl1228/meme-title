@@ -3,10 +3,11 @@ package com.memetitle.meme.presentation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.memetitle.auth.infrastructure.JwtProvider;
 import com.memetitle.global.config.WebConfig;
+import com.memetitle.image.dto.FileInfoResponse;
+import com.memetitle.image.infrastructure.AwsS3Provider;
 import com.memetitle.meme.dto.MemeElement;
 import com.memetitle.meme.dto.response.MemesResponse;
 import com.memetitle.meme.service.MemeService;
-import com.memetitle.meme.service.StorageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,7 +39,7 @@ class MemeControllerTest {
     @MockBean
     private MemeService memeService;
     @MockBean
-    private StorageService storageService;
+    private AwsS3Provider awsS3Provider;
     @MockBean
     private JwtProvider jwtProvider;
 
@@ -53,7 +54,7 @@ class MemeControllerTest {
     void createMeme() throws Exception {
         // given
         MockMultipartFile file = new MockMultipartFile("file", "test.jpg", MediaType.IMAGE_JPEG_VALUE, "image content".getBytes());
-        given(storageService.store(any())).willReturn(null);
+        given(awsS3Provider.upload(any(), any())).willReturn(FileInfoResponse.of("img-url"));
         given(memeService.saveMeme(any(), any())).willReturn(1L);
 
         // when, then

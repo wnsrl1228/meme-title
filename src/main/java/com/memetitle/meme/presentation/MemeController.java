@@ -1,8 +1,9 @@
 package com.memetitle.meme.presentation;
 
+import com.memetitle.image.dto.FileInfoResponse;
+import com.memetitle.image.infrastructure.AwsS3Provider;
 import com.memetitle.meme.dto.response.MemesResponse;
 import com.memetitle.meme.service.MemeService;
-import com.memetitle.meme.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -19,15 +20,15 @@ import static org.springframework.data.domain.Sort.Direction.DESC;
 public class MemeController {
 
     private final MemeService memeService;
-    private final StorageService storageService;
+    private final AwsS3Provider awsS3Provider;
 
-    // TODO: 관리자 전용
+    // TODO: aws s3로 변경한 상태, 임시용으로 추후 삭제
     @PostMapping("/memes")
     public ResponseEntity<Void> createMeme(
             @RequestPart("file") final MultipartFile multipartFile
     ) {
-        final String imgUrl = storageService.store(multipartFile);
-        final Long memeId = memeService.saveMeme(imgUrl, multipartFile.getOriginalFilename());
+        FileInfoResponse fileInfoResponse = awsS3Provider.upload(multipartFile, "memes");
+        final Long memeId = memeService.saveMeme(fileInfoResponse.getImgUrl(), multipartFile.getOriginalFilename());
         return ResponseEntity.created(URI.create("/memes/" + memeId)).build();
     }
 
