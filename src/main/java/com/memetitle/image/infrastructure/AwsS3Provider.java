@@ -30,6 +30,10 @@ public class AwsS3Provider {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
+    @Value("${cdn.domain}")
+    private String cdnDomain;
+
+
     private final AmazonS3 amazonS3;
 
     /**
@@ -58,8 +62,8 @@ public class AwsS3Provider {
         }
 
         // s3에 저장된 파일 url 얻어옴.
-        final String imgUrl = amazonS3.getUrl(bucket, fileName).toString();
-        return FileInfoResponse.of(imgUrl);
+        final String path = amazonS3.getUrl(bucket, fileName).getPath();
+        return FileInfoResponse.of(createUrlName(path));
     }
 
     public void delete(final String imageAddress){
@@ -93,6 +97,14 @@ public class AwsS3Provider {
         } catch (NullPointerException e) {
             throw new StorageException(INVALID_FILE);
         }
+    }
+
+    /**
+     * cdn 호스트 붙인 url 반환
+     * ex) https://dmpoeindaa9de.cloudfront.net + /post-image/filename.jpg
+     */
+    private String createUrlName(String path) {
+        return cdnDomain + path;
     }
 
     private String createFileName(final String fileName, final String dirName){
