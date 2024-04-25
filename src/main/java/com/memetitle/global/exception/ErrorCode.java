@@ -36,10 +36,14 @@ public enum ErrorCode {
 
     INVALID_JWT_FORMAT(5001, "유효하지 않은 JWT 형식입니다."),
 
-    FAILED_TO_STORE_FILE(8000, "이미지가 저장에 실패했습니다."),
+    FAILED_TO_STORE_FILE(8000, "이미지 저장에 실패했습니다."),
     EMPTY_FILE_STORE_FAILED(8001, "이미지가 비어있습니다."),
     OUTSIDE_CURRENT_DIRECTORY(8002, "현재 디렉토리에 저장할 수 없습니다."),
     NOT_FOUND_IMAGE(8003, "이미지를 찾을 수 없습니다."),
+    INVALID_FILE_EXTENSION(8005, "지원되지 않는 이미지 형식입니다. 유효한 형식은 jpg, jpeg, png, gif 입니다."),
+    INVALID_FILE(8006, "업로드된 파일이 이미지 형식이 아닙니다. 유효한 이미지 파일을 업로드해주세요."),
+    FAILED_TO_DELETE_FILE(8007, "이미지 삭제에 실패했습니다."),
+
     SERVER_ERROR(9999, "서버에 문제가 발생하였습니다.");
 
 

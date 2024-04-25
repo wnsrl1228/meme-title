@@ -63,7 +63,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .includePathPattern("/titles/{titleId}/like", PathMethod.POST)
                 .includePathPattern("/titles/{titleId}/like", PathMethod.DELETE)
                 .includePathPattern("/comments/{commentId}/like", PathMethod.POST)
-                .includePathPattern("/comments/{commentId}/like", PathMethod.DELETE);
+                .includePathPattern("/comments/{commentId}/like", PathMethod.DELETE)
+                .includePathPattern("/image", PathMethod.POST);
     }
 
     @Override
