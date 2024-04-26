@@ -1,18 +1,19 @@
 package com.memetitle.meme.service;
 
+import com.memetitle.global.exception.InvalidException;
 import com.memetitle.meme.domain.Meme;
+import com.memetitle.meme.dto.MemeElement;
 import com.memetitle.meme.dto.response.MemesResponse;
 import com.memetitle.meme.repository.MemeRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
+
+import static com.memetitle.global.exception.ErrorCode.NOT_FOUND_MEME_ID;
 
 
 @Service
@@ -42,4 +43,9 @@ public class MemeService {
     }
 
 
+    public MemeElement getMemeByMemeId(Long memeId) {
+        Meme meme = memeRepository.findById(memeId)
+                .orElseThrow(() -> new InvalidException(NOT_FOUND_MEME_ID));
+        return MemeElement.of(meme);
+    }
 }

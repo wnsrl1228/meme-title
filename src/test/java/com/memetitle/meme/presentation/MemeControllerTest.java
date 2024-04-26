@@ -96,4 +96,28 @@ class MemeControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(memesResponse)));
     }
+
+    @Test
+    @DisplayName("하나의 밈 조회 요청에 성공한다.")
+    void getMeme() throws Exception {
+        // given
+        Long memeId = 1L;
+        MemeElement memeElement = MemeElement.builder()
+                .id(1L)
+                .imgOriginalName("name")
+                .imgUrl("/img")
+                .isInProgress(true)
+                .startDate(LocalDate.now())
+                .endDate(LocalDate.now().plusDays(7))
+                .build();
+
+        given(memeService.getMemeByMemeId(any())).willReturn(memeElement);
+
+        // when, then
+        mockMvc.perform(MockMvcRequestBuilders.get("/memes/{memeId}", memeId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(memeElement)));
+    }
 }

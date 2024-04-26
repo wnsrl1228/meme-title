@@ -66,4 +66,17 @@ class MemeServiceTest {
         assertThat(memes.size()).isEqualTo(20);
         assertThat(memes.get(0).getId()).isEqualTo(21);
     }
+
+    @Test
+    @DisplayName("밈 조회에 성공한다.")
+    void getMemeByMemeId_success(){
+        // given
+        Long memeId = memeService.saveMeme(IMG_URL, IMG_ORIGINAL_NAME);
+
+        // when
+        MemeElement memeElement = memeService.getMemeByMemeId(memeId);
+
+        // then
+        assertThat(memeElement.getId()).isEqualTo(memeId);
+    }
 }

@@ -2,6 +2,7 @@ package com.memetitle.meme.presentation;
 
 import com.memetitle.image.dto.FileInfoResponse;
 import com.memetitle.image.infrastructure.AwsS3Provider;
+import com.memetitle.meme.dto.MemeElement;
 import com.memetitle.meme.dto.response.MemesResponse;
 import com.memetitle.meme.service.MemeService;
 import lombok.RequiredArgsConstructor;
@@ -37,5 +38,12 @@ public class MemeController {
             @PageableDefault(sort = "startDate", direction = DESC) final Pageable pageable
     ) {
         return ResponseEntity.ok().body(memeService.getPageableMemes(pageable));
+    }
+
+    @GetMapping("/memes/{memeId}")
+    public ResponseEntity<MemeElement> getMeme(
+            @PathVariable final Long memeId
+    ) {
+        return ResponseEntity.ok().body(memeService.getMemeByMemeId(memeId));
     }
 }
