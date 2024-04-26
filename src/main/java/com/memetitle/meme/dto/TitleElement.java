@@ -14,6 +14,7 @@ public class TitleElement {
 
     private Long id;
     private Long memeId;
+    private String imgUrl;
     private String title;
     private MemberResponse member;
     private int likeCount;
@@ -23,6 +24,7 @@ public class TitleElement {
         return TitleElement.builder()
                 .id(title.getId())
                 .memeId(title.getMemeId())
+                .imgUrl(title.getImgUrl())
                 .title(title.getTitle())
                 .member(MemberResponse.of(title.getMember()))
                 .likeCount(title.getLikeCount())
