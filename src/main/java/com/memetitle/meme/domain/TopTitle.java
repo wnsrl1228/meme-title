@@ -17,8 +17,9 @@ public class TopTitle {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long memeId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "meme_id")
+    private Meme meme;
 
     @Column(nullable = false)
     private Long titleId;
@@ -39,8 +40,8 @@ public class TopTitle {
     @Column(nullable = false)
     private int ranking;
 
-    public TopTitle(Long memeId, Long titleId, String title, Member member, LocalDateTime createdAt, int periodLikeCount, int ranking) {
-        this.memeId = memeId;
+    public TopTitle(Meme meme, Long titleId, String title, Member member, LocalDateTime createdAt, int periodLikeCount, int ranking) {
+        this.meme = meme;
         this.titleId = titleId;
         this.title = title;
         this.member = member;
@@ -49,9 +50,9 @@ public class TopTitle {
         this.ranking = ranking;
     }
 
-    public static TopTitle of(Long memeId, Title title, int ranking) {
+    public static TopTitle of(Meme meme, Title title, int ranking) {
         return new TopTitle(
-                memeId,
+                meme,
                 title.getId(),
                 title.getTitle(),
                 title.getMember(),

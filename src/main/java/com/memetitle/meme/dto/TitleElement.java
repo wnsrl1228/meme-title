@@ -35,7 +35,8 @@ public class TitleElement {
     public static TitleElement of(TopTitle topTitle) {
         return TitleElement.builder()
                 .id(topTitle.getTitleId())
-                .memeId(topTitle.getMemeId())
+                .memeId(topTitle.getMeme().getId())
+                .imgUrl(topTitle.getMeme().getImgUrl())
                 .title(topTitle.getTitle())
                 .member(MemberResponse.of(topTitle.getMember()))
                 .likeCount(topTitle.getPeriodLikeCount())

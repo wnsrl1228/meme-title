@@ -189,7 +189,7 @@ class MemberServiceTest {
         meme2.updateStatusToEnded();
 
         Title title = titleRepository.save(new Title(meme2, initMember, SAMPLE_TITLE));
-        topTitleRepository.save(TopTitle.of(meme2.getId(), title, 1));
+        topTitleRepository.save(TopTitle.of(meme2, title, 1));
 
         initMember.updateIntroduction("새로운 자기소개");
 

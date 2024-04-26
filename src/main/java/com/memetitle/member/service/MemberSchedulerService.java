@@ -50,7 +50,7 @@ public class MemberSchedulerService {
 
             // 상위 3개의 제목은 TopTitle에 저장
             // - 동수 무시하고 3개만 저장
-            saveTopTitles(meme.getId(), titles);
+            saveTopTitles(meme, titles);
         }
     }
 
@@ -76,17 +76,17 @@ public class MemberSchedulerService {
         }
     }
 
-    private void saveTopTitles(Long memeId, List<Title> titles) {
+    private void saveTopTitles(Meme meme, List<Title> titles) {
         int ranking = 1;
         int beforeLikeCount = titles.get(0).getLikeCount();
         for (int i = 0; i < Math.min(3, titles.size()); i++) {
             Title title = titles.get(i);
             if (beforeLikeCount == title.getLikeCount()) {
-                topTitleRepository.save(TopTitle.of(memeId, title, ranking));
+                topTitleRepository.save(TopTitle.of(meme, title, ranking));
             } else {
                 ranking++;
                 beforeLikeCount = title.getLikeCount();
-                topTitleRepository.save(TopTitle.of(memeId, title, ranking));
+                topTitleRepository.save(TopTitle.of(meme, title, ranking));
             }
         }
     }

@@ -182,7 +182,7 @@ class TitleServiceTest {
     void deleteTitle_TOP_TITLE_CANNOT_BE_DELETED() {
         // given
 
-        topTitleRepository.save(TopTitle.of(initMeme.getId(), initTitle, 1));
+        topTitleRepository.save(TopTitle.of(initMeme, initTitle, 1));
 
         // when & then
         assertThatThrownBy(() -> titleService.deleteTitle(initMember.getId(), initTitle.getId()))

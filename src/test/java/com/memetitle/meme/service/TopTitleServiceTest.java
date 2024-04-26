@@ -63,9 +63,9 @@ class TopTitleServiceTest {
         Title title2 = titleRepository.save(new Title(initMeme, initMember, "안녕!"));
         Title title3 = titleRepository.save(new Title(initMeme, initMember, "안녕!"));
 
-        topTitleRepository.save(TopTitle.of(initMeme.getId(), initTitle, 1));
-        topTitleRepository.save(TopTitle.of(initMeme.getId(), title2, 2));
-        topTitleRepository.save(TopTitle.of(initMeme.getId(), title3, 3));
+        topTitleRepository.save(TopTitle.of(initMeme, initTitle, 1));
+        topTitleRepository.save(TopTitle.of(initMeme, title2, 2));
+        topTitleRepository.save(TopTitle.of(initMeme, title3, 3));
 
         // when
         TopTitlesResponse topTitlesResponse = topTitleService.getTopTitlesByMemeId(initMeme.getId());
