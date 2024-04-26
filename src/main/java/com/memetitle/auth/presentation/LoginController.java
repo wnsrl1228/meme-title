@@ -28,7 +28,7 @@ public class LoginController {
         final LoginTokens token = loginService.login(code);
 
         final ResponseCookie cookie1 = ResponseCookie.from("refresh-token", token.getRefreshToken())
-                .maxAge(600)
+                .maxAge(604800)
                 .sameSite("None")
                 .secure(true)
                 .httpOnly(true)
