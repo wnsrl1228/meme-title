@@ -81,6 +81,9 @@ public class MemberSchedulerService {
         int beforeLikeCount = titles.get(0).getLikeCount();
         for (int i = 0; i < Math.min(3, titles.size()); i++) {
             Title title = titles.get(i);
+
+            if (title.getLikeCount() == 0) break;
+
             if (beforeLikeCount == title.getLikeCount()) {
                 topTitleRepository.save(TopTitle.of(meme, title, ranking));
             } else {

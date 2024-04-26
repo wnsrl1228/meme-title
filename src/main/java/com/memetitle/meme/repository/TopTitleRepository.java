@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface TopTitleRepository extends JpaRepository<TopTitle, Long> {
 
-    @EntityGraph(attributePaths = {"member"})
+    @EntityGraph(attributePaths = {"member", "meme"})
     List<TopTitle> findByMemeIdOrderByRanking(Long memeId);
 
     boolean existsByTitleId(Long titleId);
