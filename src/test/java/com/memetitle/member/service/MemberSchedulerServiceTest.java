@@ -68,13 +68,13 @@ class MemberSchedulerServiceTest {
         member6 = memberRepository.save(new Member("SAMPLE_SNSTOKENID_6", "SAMPLE_EMAIL_6", "SAMPLE_NICKNAME_6"));
         member7 = memberRepository.save(new Member("SAMPLE_SNSTOKENID_7", "SAMPLE_EMAIL_7", "SAMPLE_NICKNAME_7"));
 
-        title1 = titleRepository.save(new Title(initMeme.getId(), member1, SAMPLE_TITLE));
-        title2 = titleRepository.save(new Title(initMeme.getId(), member2, SAMPLE_TITLE));
-        title3 = titleRepository.save(new Title(initMeme.getId(), member3, SAMPLE_TITLE));
-        title4 = titleRepository.save(new Title(initMeme.getId(), member4, SAMPLE_TITLE));
-        title5 = titleRepository.save(new Title(initMeme.getId(), member5, SAMPLE_TITLE));
-        title6 = titleRepository.save(new Title(initMeme.getId(), member6, SAMPLE_TITLE));
-        title7 = titleRepository.save(new Title(initMeme.getId(), member7, SAMPLE_TITLE));
+        title1 = titleRepository.save(new Title(initMeme, member1, SAMPLE_TITLE));
+        title2 = titleRepository.save(new Title(initMeme, member2, SAMPLE_TITLE));
+        title3 = titleRepository.save(new Title(initMeme, member3, SAMPLE_TITLE));
+        title4 = titleRepository.save(new Title(initMeme, member4, SAMPLE_TITLE));
+        title5 = titleRepository.save(new Title(initMeme, member5, SAMPLE_TITLE));
+        title6 = titleRepository.save(new Title(initMeme, member6, SAMPLE_TITLE));
+        title7 = titleRepository.save(new Title(initMeme, member7, SAMPLE_TITLE));
     }
 
     /**
@@ -150,11 +150,11 @@ class MemberSchedulerServiceTest {
     @DisplayName("유저1이 쓴 제목이 1등 2등한 경우 180점을 얻고 유저2가 쓴 제목이 공동 3등을 한 경우 120점을 얻는다.")
     void updateScoreByTitleLikeCount_3() {
         // give
-        Title title8 = titleRepository.save(new Title(initMeme.getId(), member1, SAMPLE_TITLE));
+        Title title8 = titleRepository.save(new Title(initMeme, member1, SAMPLE_TITLE));
         title1.increaseLike();title1.increaseLike();title1.increaseLike();
         title8.increaseLike();title8.increaseLike();
 
-        Title title9 = titleRepository.save(new Title(initMeme.getId(), member3, SAMPLE_TITLE));
+        Title title9 = titleRepository.save(new Title(initMeme, member3, SAMPLE_TITLE));
         title3.increaseLike();
         title9.increaseLike();
 

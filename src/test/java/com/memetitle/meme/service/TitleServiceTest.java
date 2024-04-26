@@ -61,7 +61,7 @@ class TitleServiceTest {
     void init() {
         initMeme = memeRepository.save(new Meme("test.jpg", IMG_URL, LocalDateTime.now(), LocalDateTime.now()));
         initMember = memberRepository.save(new Member(SAMPLE_SNSTOKENID, SAMPLE_EMAIL, SAMPLE_NICKNAME));
-        initTitle = titleRepository.save(new Title(initMeme.getId(), initMember, "안녕!"));
+        initTitle = titleRepository.save(new Title(initMeme, initMember, "안녕!"));
     }
 
     @Test
@@ -110,9 +110,9 @@ class TitleServiceTest {
     @DisplayName("밈 제목 생성 시 이미 3개 이상의 제목을 작성했을 시 예외가 발생한다.")
     void saveTitle_MAX_NUMBER_OF_TITLES_REACHED() {
         // given
-        titleRepository.save(new Title(initMeme.getId(), initMember, "안녕!"));
-        titleRepository.save(new Title(initMeme.getId(), initMember, "안녕!"));
-        titleRepository.save(new Title(initMeme.getId(), initMember, "안녕!"));
+        titleRepository.save(new Title(initMeme, initMember, "안녕!"));
+        titleRepository.save(new Title(initMeme, initMember, "안녕!"));
+        titleRepository.save(new Title(initMeme, initMember, "안녕!"));
 
         TitleCreateRequest titleCreateRequest = new TitleCreateRequest(SAMPLE_TITLE);
 
@@ -128,7 +128,7 @@ class TitleServiceTest {
         // given
         for (int id=2;id<=4;id++) {
             Thread.sleep(1);
-            titleRepository.save(new Title(initMeme.getId(), initMember, "안녕!"));
+            titleRepository.save(new Title(initMeme, initMember, "안녕!"));
         }
 
         // when

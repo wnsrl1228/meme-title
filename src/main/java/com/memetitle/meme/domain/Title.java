@@ -24,6 +24,9 @@ public class Title {
     @Column(nullable = false)
     private Long memeId;
 
+    @Column(nullable = false)
+    private String imgUrl;
+
     @Column(nullable = false, length = 50)
     private String title;
 
@@ -38,8 +41,9 @@ public class Title {
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
-    public Title(Long memeId, Member member, String title) {
-        this.memeId = memeId;
+    public Title(Meme meme, Member member, String title) {
+        this.memeId = meme.getId();
+        this.imgUrl = meme.getImgUrl();
         this.member = member;
         this.title = title;
     }

@@ -3,6 +3,7 @@ package com.memetitle.meme.service;
 import com.memetitle.global.exception.InvalidException;
 import com.memetitle.member.domain.Member;
 import com.memetitle.member.repository.MemberRepository;
+import com.memetitle.meme.domain.Meme;
 import com.memetitle.meme.domain.Title;
 import com.memetitle.meme.dto.request.TitleCreateRequest;
 import com.memetitle.meme.dto.response.TitleDetailResponse;
@@ -33,9 +34,8 @@ public class TitleService {
     public Long saveTitle(final Long memberId, final Long memeId, final TitleCreateRequest titleCreateRequest) {
         final Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new InvalidException(NOT_FOUND_MEMBER_ID));
-        if (!memeRepository.existsById(memeId)) {
-            throw new InvalidException(NOT_FOUND_MEME_ID);
-        }
+        Meme meme = memeRepository.findById(memeId)
+                .orElseThrow(() -> new InvalidException(NOT_FOUND_MEME_ID));
 
         long myTitleCount = titleRepository.countByMemeIdAndMember(memeId, member);
         if (myTitleCount >= 3) {
@@ -43,7 +43,7 @@ public class TitleService {
         }
 
         final Title title = new Title(
-                memeId,
+                meme,
                 member,
                 titleCreateRequest.getTitle()
         );

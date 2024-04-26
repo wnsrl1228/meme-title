@@ -53,15 +53,15 @@ class TopTitleServiceTest {
     void init() {
         initMeme = memeRepository.save(new Meme("test.jpg", IMG_URL, LocalDateTime.now(), LocalDateTime.now()));
         initMember = memberRepository.save(new Member(SAMPLE_SNSTOKENID, SAMPLE_EMAIL, SAMPLE_NICKNAME));
-        initTitle = titleRepository.save(new Title(initMeme.getId(), initMember, "안녕!"));
+        initTitle = titleRepository.save(new Title(initMeme, initMember, "안녕!"));
     }
 
     @Test
     @DisplayName("해당 meme에 대한 Toptitle을 불러오기를 성공한다.")
     void getTopTitlesByMemeId_success() {
         // given
-        Title title2 = titleRepository.save(new Title(initMeme.getId(), initMember, "안녕!"));
-        Title title3 = titleRepository.save(new Title(initMeme.getId(), initMember, "안녕!"));
+        Title title2 = titleRepository.save(new Title(initMeme, initMember, "안녕!"));
+        Title title3 = titleRepository.save(new Title(initMeme, initMember, "안녕!"));
 
         topTitleRepository.save(TopTitle.of(initMeme.getId(), initTitle, 1));
         topTitleRepository.save(TopTitle.of(initMeme.getId(), title2, 2));

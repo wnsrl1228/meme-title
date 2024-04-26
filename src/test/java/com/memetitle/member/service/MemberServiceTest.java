@@ -74,7 +74,7 @@ class MemberServiceTest {
     void init() {
         initMeme = memeRepository.save(new Meme("test.jpg", IMG_URL, LocalDateTime.now(), LocalDateTime.now()));
         initMember = memberRepository.save(new Member(SAMPLE_SNSTOKENID, SAMPLE_EMAIL, SAMPLE_NICKNAME));
-        initTitle = titleRepository.save(new Title(initMeme.getId(), initMember, SAMPLE_TITLE));
+        initTitle = titleRepository.save(new Title(initMeme, initMember, SAMPLE_TITLE));
         initComment = commentRepository.save(new Comment(SAMPLE_COMMENT, initMember, initTitle));
     }
 
@@ -188,7 +188,7 @@ class MemberServiceTest {
         meme1.updateStatusToEnded();
         meme2.updateStatusToEnded();
 
-        Title title = titleRepository.save(new Title(meme2.getId(), initMember, SAMPLE_TITLE));
+        Title title = titleRepository.save(new Title(meme2, initMember, SAMPLE_TITLE));
         topTitleRepository.save(TopTitle.of(meme2.getId(), title, 1));
 
         initMember.updateIntroduction("새로운 자기소개");

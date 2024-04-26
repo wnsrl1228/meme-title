@@ -60,7 +60,7 @@ class CommentLikeServiceTest {
     void init() {
         initMeme = memeRepository.save(new Meme("test.jpg", IMG_URL, LocalDateTime.now(), LocalDateTime.now()));
         initMember = memberRepository.save(new Member(SAMPLE_SNSTOKENID, SAMPLE_EMAIL, SAMPLE_NICKNAME));
-        initTitle = titleRepository.save(new Title(initMeme.getId(), initMember, "안녕!"));
+        initTitle = titleRepository.save(new Title(initMeme, initMember, "안녕!"));
         initComment = commentRepository.save(new Comment(SAMPLE_COMMENT, initMember, initTitle));
     }
 

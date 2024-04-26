@@ -66,7 +66,7 @@ class CommentServiceTest {
     void init() {
         initMeme = memeRepository.save(new Meme("test.jpg", IMG_URL, LocalDateTime.now(), LocalDateTime.now()));
         initMember = memberRepository.save(new Member(SAMPLE_SNSTOKENID, SAMPLE_EMAIL, SAMPLE_NICKNAME));
-        initTitle = titleRepository.save(new Title(initMeme.getId(), initMember, SAMPLE_TITLE));
+        initTitle = titleRepository.save(new Title(initMeme, initMember, SAMPLE_TITLE));
         initComment = commentRepository.save(new Comment(SAMPLE_COMMENT, initMember, initTitle));
     }
 
