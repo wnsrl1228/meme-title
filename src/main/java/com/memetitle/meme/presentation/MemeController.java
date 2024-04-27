@@ -1,5 +1,7 @@
 package com.memetitle.meme.presentation;
 
+import com.memetitle.auth.Admin;
+import com.memetitle.auth.dto.AdminMember;
 import com.memetitle.image.dto.FileInfoResponse;
 import com.memetitle.image.infrastructure.AwsS3Provider;
 import com.memetitle.meme.dto.MemeElement;
@@ -26,6 +28,7 @@ public class MemeController {
     // TODO: aws s3로 변경한 상태, 임시용으로 추후 삭제
     @PostMapping("/memes")
     public ResponseEntity<Void> createMeme(
+            @Admin AdminMember adminMember,
             @RequestPart("file") final MultipartFile multipartFile
     ) {
         FileInfoResponse fileInfoResponse = awsS3Provider.upload(multipartFile, "memes");

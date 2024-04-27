@@ -1,5 +1,6 @@
 package com.memetitle.global.config;
 
+import com.memetitle.auth.AdminMemberArgumentResolver;
 import com.memetitle.auth.AuthHandlerInterceptor;
 import com.memetitle.auth.LoginMemberArgumentResolver;
 import com.memetitle.auth.infrastructure.JwtProvider;
@@ -70,5 +71,6 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(new LoginMemberArgumentResolver(jwtProvider));
+        resolvers.add(new AdminMemberArgumentResolver(jwtProvider));
     }
 }
