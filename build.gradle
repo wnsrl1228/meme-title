@@ -49,7 +49,7 @@ tasks.named('test') {
 processResources.dependsOn('copySecret')
 
 tasks.register('copySecret', Copy) {
-    from './meme-title-security'
+    from './src/main/resources/meme-title-security'
     include 'application*.yml'
     into './src/main/resources'
 }
