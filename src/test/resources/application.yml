@@ -1,0 +1,51 @@
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb;MODE=MySQL
+    username: sa
+    password:
+  jpa:
+    properties:
+      hibernate:
+        format_sql: 'true'
+        jdbc:
+          time_zone: Asia/Seoul
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+
+logging.level:
+  org.hibernate.SQL: debug
+  org.hibernate.type: trace
+
+
+cloud:
+  aws:
+    credentials:
+      access-key: test  # IAM 계정의 accessKey
+      secret-key: test  # IAM 계정의 secretKey
+    region:
+      static: ap-northeast-2  # 버킷의 리전
+    s3:
+      bucket: masil-bucket  #  버킷 이름
+    stack:
+      auto: false
+cdn:
+  domain : "https://test.cloudfront.net"
+
+jwt:
+  secret-key: "c2VjcmV0a2V5c2VjcmV0a2V5c2VjcmV0a2V5c2VjcmV0a2V5c2VjcmV0a2V5c2VjcmV0a2V5c2VjcmV0a2V5c2VjcmV0a2V5c2VjcmV0a2V5c2VjcmV0a2V5c2VjcmV0a2V5c2VjcmV0a2V5"
+  access-expiration-time: 1800000
+  refresh-expiration-time: 604800000
+  claims:
+    issuer: "memetitle"
+
+oauth2:
+  provider:
+    kakao:
+      client-id: "test"
+      client-secret: "test"
+      redirect-url: "redirect-url"
+      token-url: "https://test.kakao.com/oauth/token"
+      oidc-public-key-url: "https://test.kakao.com/.well-known/jwks.json"
+
