@@ -1,7 +1,6 @@
 package com.memetitle.auth;
 
 import com.memetitle.auth.dto.AdminMember;
-import com.memetitle.auth.dto.LoginMember;
 import com.memetitle.auth.infrastructure.JwtProvider;
 import com.memetitle.global.exception.AuthException;
 import com.memetitle.global.exception.ErrorCode;
@@ -16,10 +15,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import javax.servlet.http.HttpServletRequest;
 
 @Slf4j
-@RequiredArgsConstructor
 public class AdminMemberArgumentResolver implements HandlerMethodArgumentResolver {
-
-    private final JwtProvider jwtProvider;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -32,7 +28,7 @@ public class AdminMemberArgumentResolver implements HandlerMethodArgumentResolve
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        log.info("AdminMemberArgumentResolver");
+        log.info("[AdminMemberArgumentResolver]");
         final HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         Long memberId = (Long) request.getAttribute("memberId");
 

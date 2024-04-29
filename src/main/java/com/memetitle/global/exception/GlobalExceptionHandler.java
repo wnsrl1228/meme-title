@@ -30,22 +30,24 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             HttpStatus status,
             WebRequest request
     ) {
-        log.warn(e.getMessage(), e);
-
         String errMessage = Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage();
+        log.info("[Response sent: MethodArgumentNotValidException - {}]", errMessage);
+
         return ResponseEntity.badRequest()
                 .body(new ErrorResponse(INVALID_REQUEST.getCode(), errMessage));
     }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<ErrorResponse> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException ex) {
+        log.info("[Response sent: MaxUploadSizeExceededException - {}]", "파일 업로드 실패: 최대 업로드 크기를 초과했습니다");
+
         return ResponseEntity.badRequest()
                 .body(new ErrorResponse(INVALID_REQUEST.getCode(), "파일 업로드 실패: 최대 업로드 크기를 초과했습니다"));
     }
 
     @ExceptionHandler(AuthException.class)
     protected ResponseEntity<ErrorResponse> handleAuthException(AuthException e) {
-        log.warn(e.getMessage(), e);
+        log.info("[Response sent: AuthException - {}]", e.getMessage());
 
         return ResponseEntity.badRequest()
                 .body(new ErrorResponse(e.getCode(), e.getMessage()));
@@ -53,7 +55,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(InvalidException.class)
     protected ResponseEntity<ErrorResponse> handleInvalidException(InvalidException e) {
-        log.warn(e.getMessage(), e);
+        log.info("[Response sent: InvalidException - {}]", e.getMessage());
 
         return ResponseEntity.badRequest()
                 .body(new ErrorResponse(e.getCode(), e.getMessage()));
@@ -61,7 +63,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<ErrorResponse> handleException(Exception e) {
-        log.error(e.getMessage(), e);
+        log.error("ERROR!! - {} {}", e.getMessage(), e);
 
         return ResponseEntity.badRequest()
                 .body(new ErrorResponse(SERVER_ERROR));

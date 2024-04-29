@@ -3,8 +3,7 @@ package com.memetitle.auth;
 import com.memetitle.auth.infrastructure.JwtProvider;
 import com.memetitle.global.exception.AuthException;
 import com.memetitle.global.exception.ErrorCode;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -21,8 +20,6 @@ public class AuthHandlerInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        log.info("AuthHandlerInterceptor URL : " + request.getRequestURI());
-
         String token = extractTokenFromRequest(request);
         jwtProvider.validateToken(token);
 
@@ -31,6 +28,7 @@ public class AuthHandlerInterceptor implements HandlerInterceptor {
 
         final Long memberId = Long.valueOf(subject);
         request.setAttribute("memberId", memberId);
+        log.info("[Member ID {} accessed the resource]", memberId);
 
         return true;
     }
