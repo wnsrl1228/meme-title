@@ -1,0 +1,3 @@
+[submodule "src/main/resources/meme-title-security"]
+	path = src/main/resources/meme-title-security
+	url = https://github.com/wnsrl1228/meme-title-security
