@@ -39,7 +39,3 @@ out/
 ### 설정 ###
 /src/main/resources/application.yml
 /src/test/resources/application.yml
-
-### 이미지
-/src/main/resources/storage
-/src/test/resources/storage
