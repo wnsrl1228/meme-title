@@ -41,6 +41,7 @@ public class WebConfig implements WebMvcConfigurer {
                         "/login/kakao",
                         "/auth/token",
                         "/*.ico",
+                        "/healthy/check",
                         "/error"
                 ); // 핸들러가 실행되면 안되는 애들
     }

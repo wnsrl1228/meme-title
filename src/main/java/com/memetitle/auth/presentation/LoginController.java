@@ -57,4 +57,8 @@ public class LoginController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/healthy/check")
+    public ResponseEntity<Void> healthyCheck() {
+        return ResponseEntity.ok().build();
+    }
 }
