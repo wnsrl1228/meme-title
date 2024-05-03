@@ -15,8 +15,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     boolean existsByNickname(String nickname);
 
     @Query(value = "SELECT dense_rank() over (order by m.score desc) as ranking, m.id as memberId, m.nickname as nickname, m.img_url as imgUrl, m.score as score" +
-            " from Member m " ,
-            countQuery = "select count(*) from Member",
+            " from member m " ,
+            countQuery = "select count(*) from member",
             nativeQuery = true
     )
     Page<RankDto> findMembersRanking(Pageable pageable);
