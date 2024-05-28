@@ -43,6 +43,7 @@ public enum ErrorCode {
     INVALID_FILE_EXTENSION(8005, "지원되지 않는 이미지 형식입니다. 유효한 형식은 jpg, jpeg, png, gif 입니다."),
     INVALID_FILE(8006, "업로드된 파일이 이미지 형식이 아닙니다. 유효한 이미지 파일을 업로드해주세요."),
     FAILED_TO_DELETE_FILE(8007, "이미지 삭제에 실패했습니다."),
+    FAILED_TO_ACCESS_S3(8008, "s3 접근에 실패했습니다."),
 
     SERVER_ERROR(9999, "서버에 문제가 발생하였습니다.");
 

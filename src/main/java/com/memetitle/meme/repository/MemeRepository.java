@@ -12,4 +12,6 @@ public interface MemeRepository extends JpaRepository<Meme, Long> {
     List<Meme> findAllByEndDateBetween(LocalDateTime start, LocalDateTime end);
 
     Optional<Meme> findFirstByStatusOrderByStartDateDesc(MemeStatus status);
+
+    Optional<Meme> findFirstByOrderByIdDesc();
 }

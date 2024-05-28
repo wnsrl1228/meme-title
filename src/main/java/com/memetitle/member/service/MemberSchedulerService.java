@@ -7,6 +7,7 @@ import com.memetitle.meme.repository.MemeRepository;
 import com.memetitle.meme.repository.TitleRepository;
 import com.memetitle.meme.repository.TopTitleRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -34,6 +36,7 @@ public class MemberSchedulerService {
         // 없을 경우 종료
         if (endedMemes.isEmpty()) return;
 
+        log.info("[updateScoreByTitleLikeCount] start");
         // 있을 경우 해당 meme의 title을 likeCount가 많은 순서로 5개만 가져옴
         for (Meme meme : endedMemes) {
 
@@ -52,6 +55,7 @@ public class MemberSchedulerService {
             // - 동수 무시하고 3개만 저장
             saveTopTitles(meme, titles);
         }
+        log.info("[updateScoreByTitleLikeCount] end");
     }
 
     private List<Meme> findEndedMemes() {

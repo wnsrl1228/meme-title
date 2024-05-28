@@ -1,9 +1,7 @@
 package com.memetitle.image.infrastructure;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.DeleteObjectRequest;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.*;
 import com.memetitle.global.exception.StorageException;
 import com.memetitle.image.dto.FileInfoResponse;
 import lombok.RequiredArgsConstructor;
@@ -72,6 +70,23 @@ public class AwsS3Provider {
             amazonS3.deleteObject(new DeleteObjectRequest(bucket, key));
         }catch (Exception e){
             throw new StorageException(FAILED_TO_DELETE_FILE);
+        }
+    }
+
+    public String getUrlByPrefix(final String prefix) {
+        final ListObjectsRequest listObjectsRequest = new ListObjectsRequest()
+                .withBucketName(bucket)
+                .withPrefix("memes/" + prefix + "-");
+
+        try {
+            final ObjectListing objectListing = amazonS3.listObjects(listObjectsRequest);
+            if (objectListing.getObjectSummaries().isEmpty()) {
+                return null; // 객체가 없는 경우 null 반환
+            } else {
+                return createUrlName("/" + objectListing.getObjectSummaries().get(0).getKey());
+            }
+        } catch (Exception e) {
+            throw new StorageException(FAILED_TO_ACCESS_S3);
         }
     }
 
