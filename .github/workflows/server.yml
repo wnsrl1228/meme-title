@@ -8,10 +8,20 @@ on:
     branches:
       - 'master'
 
+env:
+  AWS_REGION: ${{secrets.AWS_REGION}}
+  S3_BUCKET_NAME: ${{secrets.S3_BUCKET_NAME}}
+  CODE_DEPLOY_APPLICATION_NAME: ${{secrets.CODE_DEPLOY_APPLICATION_NAME}}
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: ${{secrets.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME}}
+
+permissions:
+  contents: read
+
 jobs:
-  build:
-    name: spring boot build & deploy
+  deploy:
+    name: Deploy
     runs-on: ubuntu-latest
+    environment: production
 
     steps:
       # 레포 불러오기
@@ -33,8 +43,27 @@ jobs:
       - name: Build with Gradle
         run : ./gradlew clean build --exclude-task test
 
-      - name: test
-        run: ls -al src/main/resources/meme-title-security/
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
 
-      - name: test
-        run: ls -al src/main/resources/
+      # 빌드 결과물을 S3 버킷에 업로드
+      - name: Upload to AWS S3
+        run: |
+          aws deploy push \
+            --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
+            --ignore-hidden-files \
+            --s3-location s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip \
+            --source .
+
+      # S3 버킷에 있는 파일을 대상으로 CodeDeploy 실행
+      - name: Deploy to AWS EC2 from S3
+        run: |
+          aws deploy create-deployment \
+            --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
+            --deployment-config-name CodeDeployDefault.AllAtOnce \
+            --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
+            --s3-location bucket=$S3_BUCKET_NAME,key=$GITHUB_SHA.zip,bundleType=zip
