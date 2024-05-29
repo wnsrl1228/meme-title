@@ -31,4 +31,6 @@ jobs:
         run : ./gradlew clean build --exclude-task test
 
       - name: test
+        run: cd src/main/resources/meme-title-security/
+      - name: test
         run: ls -al
