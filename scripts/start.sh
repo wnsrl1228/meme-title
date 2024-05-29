@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-PROJECT_ROOT="/home/ubuntu/app"
+PROJECT_ROOT="/home/ubuntu/memetitle"
 JAR_FILE="$PROJECT_ROOT/memetitle.jar"
 
 DEPLOY_LOG="$PROJECT_ROOT/deploy.log"
