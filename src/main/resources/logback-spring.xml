@@ -24,7 +24,7 @@
         <!--    저장 정책 설정-->
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <!--    순서대로 파일명 패턴, 한 파일의 최대 사이즈, 최대 보관 일수, 총 파일 사이즈-->
-            <fileNamePattern>../logs/info/%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>./logs/info/%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxFileSize>100MB</maxFileSize>
             <maxHistory>10</maxHistory>
             <totalSizeCap>1GB</totalSizeCap>
@@ -43,7 +43,7 @@
             <onMismatch>DENY</onMismatch>
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>../logs/warn/%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>./logs/warn/%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxFileSize>100MB</maxFileSize>
             <maxHistory>10</maxHistory>
             <totalSizeCap>1GB</totalSizeCap>
@@ -61,7 +61,7 @@
             <onMismatch>DENY</onMismatch>
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>../logs/error/%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>./logs/error/%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxFileSize>100MB</maxFileSize>
             <maxHistory>10</maxHistory>
             <totalSizeCap>1GB</totalSizeCap>
