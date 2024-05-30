@@ -21,7 +21,7 @@ public class MemeSchedulerService {
     private final AwsS3Provider awsS3Provider;
     private final MemeRepository memeRepository;
 
-    @Scheduled(cron = "0 1 0 */7 * *") // 0시 1분, 7일 주기
+    @Scheduled(cron = "0 0 0 * * MON") // 매주 월요일 자정
     public void generateMeme() {
 
         Long id = generateNextMemeId();
