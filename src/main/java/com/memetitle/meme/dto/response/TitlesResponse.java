@@ -20,7 +20,7 @@ public class TitlesResponse {
     public static TitlesResponse ofTitles(Slice<Title> titles) {
         final List<TitleElement> titleElements = titles.stream()
                 .map(TitleElement::of)
-                .collect(Collectors.toList());
+                .toList();
 
         return TitlesResponse.builder()
                 .titles(titleElements)

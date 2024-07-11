@@ -22,7 +22,7 @@ public class CommentsResponse {
     public static CommentsResponse ofComments(Page<Comment> comments) {
         final List<CommentElement> commentElement = comments.stream()
                 .map(CommentElement::of)
-                .collect(Collectors.toList());
+                .toList();
 
         return CommentsResponse.builder()
                 .comments(commentElement)
@@ -36,7 +36,7 @@ public class CommentsResponse {
     public static CommentsResponse ofCommentDtos(Page<CommentDto> comments) {
         final List<CommentElement> commentElement = comments.stream()
                 .map(CommentElement::of)
-                .collect(Collectors.toList());
+                .toList();
 
         return CommentsResponse.builder()
                 .comments(commentElement)

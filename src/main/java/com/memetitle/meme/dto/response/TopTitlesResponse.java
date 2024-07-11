@@ -17,7 +17,7 @@ public class TopTitlesResponse {
     public static TopTitlesResponse ofTopTitles(List<TopTitle> topTitles) {
         final List<TitleElement> titleElements = topTitles.stream()
                 .map(TitleElement::of)
-                .collect(Collectors.toList());
+                .toList();
 
         return TopTitlesResponse.builder()
                 .titles(titleElements)
