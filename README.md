@@ -41,3 +41,5 @@
 ## DB ERD
 <img width="100%" src="https://github.com/wnsrl1228/meme-title/assets/67573836/8b8d9be3-7617-4bf3-a345-86c9d1a9ac42">
 
+## API 문서
+<img width="100%" src="https://github.com/wnsrl1228/meme-title/assets/67573836/0067e481-6066-44c8-8dd8-f72209eac2bd">
