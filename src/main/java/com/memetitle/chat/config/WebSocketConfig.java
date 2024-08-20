@@ -12,13 +12,13 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/chat") // socket 연결 url
+        registry.addEndpoint("/ws") // socket 연결 url
                 .setAllowedOrigins("https://memetitle.com", "http://localhost:3000");
     }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/topic");  // 구독 url(채팅방 참여=구독)
-        config.setApplicationDestinationPrefixes("/app");     // 메세지 요청 prefixes 설정
+        config.enableSimpleBroker("/sub");  // 구독 url(채팅방 참여=구독)
+        config.setApplicationDestinationPrefixes("/pub");     // 메세지 발행 prefixes 설정
     }
 }

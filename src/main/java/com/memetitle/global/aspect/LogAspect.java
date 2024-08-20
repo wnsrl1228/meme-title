@@ -2,7 +2,6 @@ package com.memetitle.global.aspect;
 
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.*;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -22,14 +21,16 @@ public class LogAspect {
 
     @AfterReturning(pointcut = "controller()", returning = "responseEntity")
     public void afterReturning(ResponseEntity<?> responseEntity) {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        if (request != null) {
-            HttpStatusCode statusCode = responseEntity.getStatusCode();
-            if (statusCode != null) {
-                log.info("[Response sent: {} {} {}]", request.getMethod(), request.getRequestURI(), statusCode);
-            } else {
-                log.info("[Response sent: {} {}]", request.getMethod(), request.getRequestURI());
+        try {
+            HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+            if (request != null) {
+                HttpStatusCode statusCode = responseEntity.getStatusCode();
+                if (statusCode != null) {
+                    log.info("[Response sent: {} {} {}]", request.getMethod(), request.getRequestURI(), statusCode);
+                } else {
+                    log.info("[Response sent: {} {}]", request.getMethod(), request.getRequestURI());
+                }
             }
-        }
+        } catch (IllegalStateException e) {}
     }
 }
