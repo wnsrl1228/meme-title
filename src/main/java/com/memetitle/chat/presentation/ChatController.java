@@ -33,6 +33,7 @@ public class ChatController {
                 .nickname(chatMessageRequest.getNickname())
                 .message(chatMessageRequest.getMessage())
                 .roomId(roomId)
+                .date(chatMessageRequest.getDate())
                 .build();
         return ResponseEntity.ok(chatMessageResponse);
     }
