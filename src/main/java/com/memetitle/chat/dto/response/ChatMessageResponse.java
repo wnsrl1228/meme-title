@@ -9,5 +9,7 @@ public class ChatMessageResponse {
 
     private String nickname;
     private String message;
+    private Long roomId;
+
 }
 
