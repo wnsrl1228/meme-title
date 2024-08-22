@@ -11,6 +11,9 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
 
+/**
+ * 채팅방 인원 관리용 인터셉터
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor

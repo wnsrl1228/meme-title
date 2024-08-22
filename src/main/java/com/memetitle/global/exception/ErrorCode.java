@@ -12,6 +12,7 @@ public enum ErrorCode {
     NOT_FOUND_MEME_ID(2001, "해당 밈을 찾을 수 없습니다."),
     NOT_FOUND_TITLE_ID(2002, "해당 제목을 찾을 수 없습니다."),
     NOT_FOUND_COMMENT_ID(2003, "해당 댓글을 찾을 수 없습니다."),
+    NOT_FOUND_CHATROOM_ID(2009, "해당 채팅방을 찾을 수 없습니다."),
     NOT_FOUND_TITLE_LIKE(2004, "해당 제목에 좋아요가 없습니다."),
     NOT_FOUND_COMMENT_LIKE(2005, "해당 댓글에 좋아요가 없습니다."),
     TITLE_ACCESS_DENIED(2012, "해당 제목에 대한 권한이 없습니다."),

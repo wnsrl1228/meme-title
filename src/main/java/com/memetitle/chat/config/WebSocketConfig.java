@@ -14,10 +14,12 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final WebSocketInterceptor webSocketInterceptor;
+    private final CustomHandshakeInterceptor customHandshakeInterceptor;
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws/{roomId}") // socket 연결 url
-                .setAllowedOrigins("https://memetitle.com", "http://localhost:3000");
+                .setAllowedOrigins("https://memetitle.com", "http://localhost:3000")
+                .addInterceptors(customHandshakeInterceptor);
     }
 
     @Override
