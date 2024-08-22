@@ -21,4 +21,12 @@ public class ChatService {
         final List<ChatRoom> chatRooms = chatRoomRepository.findAll();
         return ChatRoomsResponse.ofChatRooms(chatRooms);
     }
+
+    public void increaseMemberCount(final Long roomId) {
+        chatRoomRepository.increaseMemberCount(roomId);
+    }
+
+    public void decreaseMemberCount(final Long roomId) {
+        chatRoomRepository.decreaseMemberCount(roomId);
+    }
 }
