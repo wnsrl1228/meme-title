@@ -18,7 +18,7 @@ public class MemesResponse {
     public static MemesResponse ofMemes(Slice<Meme> memes) {
         final List<MemeElement> memeElements = memes.stream()
                 .map(MemeElement::of)
-                .collect(Collectors.toList());
+                .toList();
 
         return MemesResponse.builder()
                 .memes(memeElements)

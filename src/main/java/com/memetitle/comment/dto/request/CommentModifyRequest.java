@@ -3,7 +3,7 @@ package com.memetitle.comment.dto.request;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 
 @NoArgsConstructor()
 @Getter

@@ -6,11 +6,10 @@ import com.memetitle.auth.dto.LoginTokens;
 import com.memetitle.auth.dto.response.TokenResponse;
 import com.memetitle.auth.service.LoginService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import static org.springframework.http.HttpHeaders.SET_COOKIE;
 

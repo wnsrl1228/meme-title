@@ -4,11 +4,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import java.time.LocalDate;
+import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
-import static javax.persistence.EnumType.STRING;
+import static jakarta.persistence.EnumType.STRING;
 
 @Entity
 @Getter

@@ -1,0 +1,35 @@
+package com.memetitle.chat.config;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.ChannelRegistration;
+import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
+import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
+import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+
+@Configuration
+@EnableWebSocketMessageBroker
+@RequiredArgsConstructor
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+
+    private final WebSocketInterceptor webSocketInterceptor;
+    private final CustomHandshakeInterceptor customHandshakeInterceptor;
+    @Override
+    public void registerStompEndpoints(StompEndpointRegistry registry) {
+        registry.addEndpoint("/ws/{roomId}") // socket 연결 url
+                .setAllowedOrigins("https://memetitle.com", "http://localhost:3000")
+                .addInterceptors(customHandshakeInterceptor);
+    }
+
+    @Override
+    public void configureMessageBroker(MessageBrokerRegistry config) {
+        config.enableSimpleBroker("/sub");  // 구독 url(채팅방 참여=구독)
+        config.setApplicationDestinationPrefixes("/pub");     // 메세지 발행 prefixes 설정
+    }
+
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.interceptors(webSocketInterceptor);
+    }
+}

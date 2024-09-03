@@ -21,7 +21,7 @@ public class RankingResponse {
     public static RankingResponse ofRankDto(Page<RankDto> rankDtos) {
         final List<RankingElement> rankingElements = rankDtos.stream()
                 .map(RankingElement::of)
-                .collect(Collectors.toList());
+                .toList();
 
         return RankingResponse.builder()
                 .ranks(rankingElements)
